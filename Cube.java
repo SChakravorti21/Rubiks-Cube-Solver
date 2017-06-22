@@ -1,7 +1,7 @@
 
 public class Cube {
 
-	//Stores the state of the cube as an object made up of several cubies
+	//Stores the state of the cube as an object of 26 cubies
 	private static Cubie[][][] cubiePos = new Cubie[3][3][3];
 
 	/**
@@ -1870,14 +1870,11 @@ public class Cube {
 			for(int i = 0; i < 3; i++) {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][2].isEdgeCubie()) {
-						CubieColor[] tempColors = cubiePos[i][j][2].getColors();
-						for(int k = 0; k<2; k++) {
-							if(tempColors[k].getColor() == 'W' && tempColors[k].getDir() == 'D') {
-								EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
-								moves += prepareSlot(i, j, 0, 'W');
-								char turnToMake = tempCubie.verticalFace(i, j);
-								moves += performMoves("" + turnToMake + "2 ");
-							}
+						if(cubiePos[i][j][2].getDirOfColor('W') == 'D') {
+							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
+							moves += prepareSlot(i, j, 0, 'W');
+							char turnToMake = tempCubie.verticalFace(i, j);
+							moves += performMoves("" + turnToMake + "2 ");
 						}
 					}
 				}
@@ -1890,30 +1887,26 @@ public class Cube {
 			for(int i = 0; i < 3; i++) {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][2].isEdgeCubie()) {
-						CubieColor[] tempColors = cubiePos[i][j][2].getColors();
-						for(int k = 0; k<2; k++) {
-							if(tempColors[k].getColor() == 'W' && tempColors[k].getDir() != 'D') {
-								EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
-								char vert = tempCubie.verticalFace(i, j);
+						if(cubiePos[i][j][2].getDirOfColor('W') != 'A' && cubiePos[i][j][2].getDirOfColor('W') != 'D') {
+							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
+							char vert = tempCubie.verticalFace(i, j);
+							moves += prepareSlot(i, j, 0, 'W');
 
-								moves += prepareSlot(i, j, 0, 'W');
-
-								if(vert == 'F') {
-									performMoves("F' U' R ");
-									moves+= "F' U' R ";
-								}
-								else if(vert == 'R') {
-									performMoves("R' U' B ");
-									moves+= "R' U' B ";
-								}
-								else if(vert == 'B') {
-									performMoves("B' U' L ");
-									moves+= "B' U' L ";
-								}
-								else if(vert == 'L') {
-									performMoves("L' U' F ");
-									moves+= "L' U' F ";
-								}
+							if(vert == 'F') {
+								performMoves("F' U' R ");
+								moves+= "F' U' R ";
+							}
+							else if(vert == 'R') {
+								performMoves("R' U' B ");
+								moves+= "R' U' B ";
+							}
+							else if(vert == 'B') {
+								performMoves("B' U' L ");
+								moves+= "B' U' L ";
+							}
+							else if(vert == 'L') {
+								performMoves("L' U' F ");
+								moves+= "L' U' F ";
 							}
 						}
 					}
@@ -1971,36 +1964,32 @@ public class Cube {
 
 			}
 		}
-		
+
 		//else check incorrectly oriented in U Layer {
 		if(numWhiteEdgesOriented() < 5) {
 			for(int i = 0; i < 3; i++) {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][0].isEdgeCubie()) {
-						CubieColor[] tempColors = cubiePos[i][j][0].getColors();
-						for(int k = 0; k<2; k++) {
-							if(tempColors[k].getColor() == 'W' && tempColors[k].getDir() != 'U') {
-								EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][0];
-								char vert = tempCubie.verticalFace(i, j);
-
-								if(vert == 'F') {
-									performMoves("F U' R");
-									moves+= "F U' R";
-								}
-								else if(vert == 'R') {
-									performMoves("R U' B");
-									moves+= "R U' B";
-								}
-								else if(vert == 'B') {
-									performMoves("B U' L");
-									moves+= "B U' L";
-								}
-								else if(vert == 'L') {
-									performMoves("L U' F");
-									moves+= "L U' F";
-								}
-								moves+= " ";
+						if(cubiePos[i][j][0].getDirOfColor('W') != 'A' && cubiePos[i][j][0].getDirOfColor('W') != 'U') {
+							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][0];
+							char vert = tempCubie.verticalFace(i, j);
+							if(vert == 'F') {
+								performMoves("F U' R");
+								moves+= "F U' R";
 							}
+							else if(vert == 'R') {
+								performMoves("R U' B");
+								moves+= "R U' B";
+							}
+							else if(vert == 'B') {
+								performMoves("B U' L");
+								moves+= "B U' L";
+							}
+							else if(vert == 'L') {
+								performMoves("L U' F");
+								moves+= "L U' F";
+							}
+							moves+= " ";
 						}
 					}
 				}
@@ -2057,11 +2046,8 @@ public class Cube {
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 3; j++) {
 				if(cubiePos[i][j][0].isEdgeCubie()) {
-					CubieColor[] tempColors = cubiePos[i][j][0].getColors();
-					for(int k = 0; k<2; k++) {
-						if(tempColors[k].getColor() == 'W' && tempColors[k].getDir() == 'U') {
-							numOriented++;
-						}
+					if(cubiePos[i][j][0].getDirOfColor('W') == 'U') {
+						numOriented++;
 					}
 				}
 			}
@@ -2093,8 +2079,8 @@ public class Cube {
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				if(cubiePos[i][j][0].isCornerCubie()) {
-					CornerCubie tempCubie = (CornerCubie)cubiePos[i][j][0];
-					if(tempCubie.isWhiteCorner()) return true;
+					if(cubiePos[i][j][0].getDirOfColor('W') != 'A') 
+						return true;
 				}
 			}
 		}
@@ -2206,48 +2192,29 @@ public class Cube {
 	 */
 	public boolean whiteCornerPrepared() {
 		boolean whiteUp = false; 
-		CornerCubie tempCubie;
 		
 		//Figure out whether the corner cubie is even a white corner
-		if(cubiePos[2][0][0].isCornerCubie()) {
-			tempCubie = (CornerCubie)cubiePos[2][0][0];
-			if(!tempCubie.isWhiteCorner()) {
-				return false;
-			}
+		if(cubiePos[2][0][0].isCornerCubie() && cubiePos[2][0][0].getDirOfColor('W') == 'A') {
+			return false;
 		}
 
 		//If the cubie is a white corner, figure out whether the white sticker is facing up
-		CubieColor[] tempColors = cubiePos[2][0][0].getColors();
-		for(int i = 0; i<3; i++) {
-			if(tempColors[i].getColor() == 'W' && tempColors[i].getDir() == 'U') {
-				whiteUp = true; break;
-			}
-		}
+		if(cubiePos[2][0][0].getDirOfColor('W') == 'U')
+			whiteUp = true;
 
 		//based on whether white is up, check accordingly if the corner is above appropriate slot
 		if(whiteUp) {
-			CubieColor[] nonWhites = new CubieColor[2];
-			int j = 0;
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getColor() != 'W') {
-					nonWhites[j] = tempColors[i]; j++;
-				}
-			}
-			for(int i = 0; i<2 && whiteUp; i++) {
-				if(tempColors[i].getDir() == 'R' && tempColors[i].getColor() == cubiePos[1][0][1].getColors()[0].getColor() ||
-				   tempColors[i].getDir() == 'F' && tempColors[i].getColor() == cubiePos[2][1][1].getColors()[0].getColor())
-					return true;
-			}
+			return (cubiePos[2][0][0].getColorOfDir('R') == cubiePos[1][0][1].getColors()[0].getColor() && 
+					cubiePos[2][0][0].getColorOfDir('F') == cubiePos[2][1][1].getColors()[0].getColor()	);
 		}
 		else {
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R' && tempColors[i].getColor() == cubiePos[2][1][1].getColors()[0].getColor() ||
-				   tempColors[i].getDir() == 'F' && tempColors[i].getColor() == cubiePos[1][0][1].getColors()[0].getColor()) {
-					return true;
-				}
-			}
+			/*Either the color on the right of the cubie matches its respective center piece OR
+			 *the color on the front of the cubie matches its respective center piece 
+			 *It is not possible for both to match because is white is not facing up, it will either be facing front or right
+			 */
+			return (cubiePos[2][0][0].getColorOfDir('R') == cubiePos[2][1][1].getColors()[0].getColor() || 
+					cubiePos[2][0][0].getColorOfDir('F') == cubiePos[1][0][1].getColors()[0].getColor());
 		}
-		return false;
 	}
 
 	/**
@@ -2257,18 +2224,128 @@ public class Cube {
 	 */
 	public boolean cornerInserted(int x, int y, int z) {
 		if(cubiePos[x][y][z].isCornerCubie()) {
-			CubieColor[] tempColors = cubiePos[x][y][z].getColors();
-			for(int i = 0; i<tempColors.length; i++) {
-				//Check bottom, front, and right colors against respective centers
-				if(tempColors[i].getDir() == 'D' && tempColors[i].getColor() != cubiePos[1][1][2].getColors()[0].getColor() ||
-						tempColors[i].getDir() == 'F' && tempColors[i].getColor() != cubiePos[1][0][1].getColors()[0].getColor() ||
-						tempColors[i].getDir() == 'R' && tempColors[i].getColor() != cubiePos[2][1][1].getColors()[0].getColor())
-					return false;
-			}
+			return (cubiePos[x][y][z].getColorOfDir('D') == cubiePos[1][1][2].getColors()[0].getColor() && 
+					cubiePos[x][y][z].getColorOfDir('F') == cubiePos[1][0][1].getColors()[0].getColor() &&
+					cubiePos[x][y][z].getColorOfDir('R') == cubiePos[2][1][1].getColors()[0].getColor());
 		}
-		return true;
+		return false;
 	}
 
+	/**
+	 * Utilizes the methods insertEdgesInU() and insertMisorientedEdges() to complete the second layer
+	 * @return A String for the moves used to complete the second layer
+	 */
+	public String insertAllEdges() {
+		String moves = new String();
+		while(nonYellowEdgesInU()) {
+			moves+=insertEdgesInU();
+			moves+="\n";
+			moves+=insertMisorientedEdges();
+			moves+="\n";
+		}
+		return moves;
+	}
+	
+	/**
+	 * Checks whether any non-yellow edges remain in the U layer.
+	 * (Any such edges need to be inserted into their respective slot in the second layer)
+	 * @return whether there is/are non-yellow edges in the U layer
+	 */
+	public boolean nonYellowEdgesInU() {
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				if(cubiePos[i][j][0].isEdgeCubie()) {
+					if(cubiePos[i][j][0].getDirOfColor('Y') == 'A') 
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Inserts all non-yellow edges in the U layer into their respective slots in the 
+	 * second layer using one of two algorithms
+	 * @return moves used to insert non-yellow edges in the U layer
+	 */
+	public String insertEdgesInU() {
+		String moves = new String();
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				if(cubiePos[i][j][0].isEdgeCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'A') {
+					//Make U turns to get cubie to (1, 0, 0)
+					if(j==1) {
+						if(i==0) {
+							moves+=performMoves("U' ");
+						}
+						else {
+							moves+=performMoves("U ");
+						}
+					}
+					else if(j==2){
+						moves+=performMoves("U2 ");
+					}
+
+					//Get cubie above respective slot in second layer
+					int numUTurns = 0;
+					int yRotations = 0;
+					while(cubiePos[1][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) { 
+						performMoves("U y' "); numUTurns++; yRotations++;
+					}
+
+					if(numUTurns == 1) {
+						moves += "U ";
+					}
+					else if(numUTurns == 2){
+						moves += "U2 ";
+					}
+					else if(numUTurns == 3) {
+						moves += "U' ";
+					}
+					if(yRotations == 1) {
+						moves+="y' ";
+					}
+					else if(yRotations == 2){
+						moves += "y2 ";
+					}
+					else if(yRotations == 3) {
+						moves += "y ";
+					}
+
+					//Insert the cubie in appropriate direction
+					if(cubiePos[1][0][0].getColorOfDir('U') == cubiePos[0][1][1].getColors()[0].getColor()) {
+						moves += performMoves("U' L' U L U F U' F' ");
+					}
+					else if(cubiePos[1][0][0].getColorOfDir('U') == cubiePos[2][1][1].getColors()[0].getColor()){
+						moves += performMoves("U R U' R' U' F' U F ");
+					}
+
+					//Reset i and j to continue checking for edges to be inserted (foregoes use of while loop)
+					i = 0; j = 0;
+				}
+			}
+		}
+		return moves;
+	}
+
+	/**
+	 * If there are any edges in the second layer that were inserted in the incorrect
+	 * orientation, this method re-inserts them in the correct orientation
+	 * @return moves used to fix edge orientations in second layer
+	 */
+	public String insertMisorientedEdges() {
+		String moves = new String();
+		for(int i = 0; i<4; i++) {
+			moves += performMoves("y ");
+			if(cubiePos[2][0][1].getDirOfColor('Y') == 'A' &&
+			   cubiePos[2][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
+				moves += performMoves("R U R' U2 R U2 R' U F' U' F");
+			}
+		}
+		return moves;
+	}
+	
+	
 	/**
 	 * Outputs the position, colors, and respective directions of colors of every cubie making up the cube
 	 * Outputs in the format: x, y, z, color1, dir1, color2, dir2, color3, dir3 (number of colors and directions dependent on cubie type)
@@ -2280,7 +2357,7 @@ public class Cube {
 					CubieColor[] tempColor = cubiePos[i][j][k].getColors();
 					System.out.print(i + ", " + j + ", " + k + ", ");
 					for(int l = 0; l<tempColor.length; l++) {
-						System.out.print(tempColor[l].getColor() + ", " + tempColor[l].getDir() + ", ");
+					System.out.print(tempColor[l].getColor() + ", " + tempColor[l].getDir() + ", ");
 					}
 					System.out.println();
 				}
@@ -2296,11 +2373,8 @@ public class Cube {
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				if(cubiePos[i][j][2].isEdgeCubie()) {
-					//If at least one of the colors is not white and facing down, return false
-					if( !(cubiePos[i][j][2].getColors()[0].getColor() == 'W' && cubiePos[i][j][2].getColors()[0].getDir() == 'D') &&
-							!(cubiePos[i][j][2].getColors()[1].getColor() == 'W' && cubiePos[i][j][2].getColors()[1].getDir() == 'D') ) {
+					if(cubiePos[i][j][2].getDirOfColor('W') != 'D')
 						return false;
-					}
 				}
 			}
 		}

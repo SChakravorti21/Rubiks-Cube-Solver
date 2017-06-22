@@ -1,7 +1,5 @@
 
 public class EdgeCubie extends Cubie{
-
-	private CubieColor[] colors;
 	
 	/**
 	 * Constructs the EdgeCubie object
@@ -9,8 +7,7 @@ public class EdgeCubie extends Cubie{
 	 * @param color1, dir1, color2, dir2; Assign colors and directions of colors of EdgeCubie
 	 */
 	public EdgeCubie(int xPos, int yPos, int zPos, char color1, char dir1, char color2, char dir2) {
-		super(xPos, yPos, zPos);
-		colors = new CubieColor[] {new CubieColor(color1, dir1), new CubieColor(color2, dir2)};
+		super(xPos, yPos, zPos, new CubieColor[] {new CubieColor(color1, dir1), new CubieColor(color2, dir2)});
 	}
 	
 	/**
@@ -41,20 +38,6 @@ public class EdgeCubie extends Cubie{
 		}
 		else return 'R';
 	
-	}
-	
-	/**
-	 * @return Colors and directions of colors of the EdgeCubie
-	 */
-	public CubieColor[] getColors() {
-		return colors;
-	}
-	
-	/**
-	 * @return Changes the colors associated with the EdgeCubie
-	 */
-	public void setColors(CubieColor[] newcolors) {
-		colors = newcolors;
 	}
 	
 }
