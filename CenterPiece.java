@@ -1,7 +1,5 @@
 
 public class CenterPiece extends Cubie{
-
-	private CubieColor[] colors = new CubieColor[1];
 	
 	/**
 	 * Constructs the CenterPiece object
@@ -9,8 +7,7 @@ public class CenterPiece extends Cubie{
 	 * @param color1, dir1; Assign color and direction of CenterPiece
 	 */
 	public CenterPiece(int xPos, int yPos, int zPos, char color1, char dir1) {
-		super(xPos, yPos, zPos);
-		colors[0] = new CubieColor(color1, dir1);
+		super(xPos, yPos, zPos, new CubieColor[] {new CubieColor(color1, dir1)});
 	}
 	
 	/**
@@ -26,17 +23,4 @@ public class CenterPiece extends Cubie{
 		return false;
 	}
 	
-	/**
-	 * @return Color and direction of color of the CenterPiece
-	 */
-	public CubieColor[] getColors() {
-		return colors;
-	}
-	
-	/**
-	 * @return Changes the color associated with the CenterPiece
-	 */
-	public void setColors(CubieColor[] newcolors) {
-		colors = newcolors;
-	}
 }

@@ -7,20 +7,25 @@ public class SolutionFinder {
 		double sum = 0;
 		
 		long startTime = System.nanoTime();
-		//System.out.println("Initializing...");
+		System.out.println("Initializing...");
 		cube = new Cube();
 		//Scramble it up
 		System.out.println("Scramble:" + cube.scramble("F2 D2 B' D2 L2 D2 B' R2 F' L2 F U B F2 R' D L' B U B F'"));
+		
 		System.out.println("Making the sunflower:");
-		System.out.print(cube.makeSunflower());
-		System.out.println();
+		if(!cube.testCross())
+			System.out.print(cube.makeSunflower() + "\n");
 		
 		System.out.println("Making the white cross:");
-		System.out.println(cube.makeCross());
+		if(!cube.testCross())
+			System.out.println(cube.makeCross());
 		System.out.println("Made Cross: " + cube.testCross());
 		
 		System.out.println("Inserting the white corners:");
 		System.out.println(cube.finishWhiteLayer());
+		
+		System.out.println("Finishing second layer:");
+		System.out.println(cube.insertAllEdges());
 		
 		long endTime = System.nanoTime();
 		long runtime = endTime - startTime;
