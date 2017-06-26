@@ -1825,7 +1825,7 @@ public class Cube {
 	 * one at a time, creating the white cross.
 	 * @return the moves used to create the white cross
 	 */
-	public String makeCross() {
+	public String makeWhiteCross() {
 		String moves = new String();
 		int numOriented = numWhiteEdgesOriented();
 
@@ -2339,12 +2339,216 @@ public class Cube {
 			moves += performMoves("y ");
 			if(cubiePos[2][0][1].getDirOfColor('Y') == 'A' &&
 			   cubiePos[2][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
-				moves += performMoves("R U R' U2 R U2 R' U F' U' F");
+				if(cubiePos[2][0][1].getColorOfDir('F') == cubiePos[2][1][1].getColors()[0].getColor() &&
+				   cubiePos[2][0][1].getColorOfDir('R') == cubiePos[1][0][1].getColors()[0].getColor()) {
+					//If the edge is the the correct slot but oriented incorrectly, perform this algorithm
+					moves += performMoves("R U R' U2 R U2 R' U F' U' F ");
+				}
+				else {
+					//If there is an edge that does not belong in the slot at all, take it out and insert in correct slot
+					moves+=performMoves("R U R' U' F' U' F ");
+					moves+=insertEdgesInU();
+				}
 			}
 		}
 		return moves;
 	}
 	
+	/**
+	 * Utility method for yellowEdgeOrientation() and makeYellowCross()
+	 * @return the number of yellow edges that are already oriented in the U layer
+	 */
+	public int numYellowEdgesOriented(){
+		int numOriented = 0;
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				if(cubiePos[i][j][0].isEdgeCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'U')
+					numOriented++;
+			}
+		}
+		return numOriented;
+	}
+	
+	/**
+	 * Utility method for orientLastLayer()
+	 * @return the number of yellow corners that are already oriented in the U layer
+	 */
+	public int numYellowCornersOriented(){
+		int numOriented = 0;
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				if(cubiePos[i][j][0].isCornerCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'U')
+					numOriented++;
+			}
+		}
+		return numOriented;
+	}
+
+	/**
+	 * Utility method for makeYellowCross(). Determines the shape that the oriented
+	 * yellow edges make.
+	 * @return Dot, L, Bar, or Cross
+	 */
+	public String yellowEdgeOrientation() {
+		String status = new String();
+		int numOriented = numYellowEdgesOriented();
+		
+		if(numOriented == 4) { //The cross has already been made
+			status = "Cross";
+		}
+		else if(numOriented == 0) { //No edges are oriented
+			status = "Dot";
+		}
+		else if(numOriented == 2) {
+			//If two edges are oriented, they either form an L-shape or a Bar
+			int[] xValues = new int[2];
+			int index = 0;
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					if(cubiePos[i][j][0].isEdgeCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'U') {
+						xValues[index] = i; index++;
+					}
+				}
+			}
+			if(Math.abs(xValues[0]-xValues[1])%2 == 0) {
+				status = "Bar";
+			}
+			else {
+				status = "L";
+			}
+		}
+		
+		return status;
+	}
+	
+	/**
+	 * Orients all yellow edges in the U layer based on their current state.
+	 * @return moves used to make the yellow cross
+	 */
+	public String makeYellowCross() {
+		String moves = new String();
+		String status = yellowEdgeOrientation();
+		
+		if(status.compareTo("Dot") == 0) {
+			//Make an L and then subsequently use the algorithm to orient the edges
+			moves += performMoves("F R U R' U' F' U2 F U R U' R' F' ");
+		}
+		else if(status.compareTo("L") == 0) {
+			//Position the L appropriately first
+			while(cubiePos[0][1][0].getDirOfColor('Y') != 'U' || cubiePos[1][2][0].getDirOfColor('Y') != 'U') {
+				moves += performMoves("U ");
+			}
+			moves += performMoves("F U R U' R' F' ");
+		}
+		else if(status.compareTo("Bar") == 0) {
+			//Position the Bar appropriately first
+			while(cubiePos[0][1][0].getDirOfColor('Y') != 'U' || cubiePos[2][1][0].getDirOfColor('Y') != 'U') {
+				moves += performMoves("U ");
+			}
+			moves += performMoves("F R U R' U' F' ");
+		}
+		return moves;
+	}
+	
+	/**
+	 * Finishes the step of orienting the last layer by orienting all yellow corners using
+	 * a beginner's method algorithm. (This has been left separate from makeYellowCross() 
+	 * to help beginners easily follow the steps to orient the last layer completely.)
+	 * @return moves used to orient last layer pieces
+	 */
+	public String orientLastLayer() {
+		String moves = new String();
+		int numOriented = numYellowCornersOriented();
+		//Use while loop since Antisune case requires Sune algorithm to be perform twice for proper orientation
+		while(numOriented != 4) {
+			if(numOriented == 0){
+				//Turn until there is a yellow sticker on the left of the ULF piece
+				while(cubiePos[0][0][0].getDirOfColor('Y') != 'L') {
+					moves += performMoves("U ");
+				}
+				//Perform Sune algorithm to orient one corner
+				moves += performMoves("R U R' U R U2 R' ");
+			}
+			else if(numOriented == 1){
+				//Sune case
+				while(cubiePos[0][0][0].getDirOfColor('Y') != 'U') {
+					moves += performMoves("U ");
+				}
+				moves += performMoves("R U R' U R U2 R' ");
+			}
+			else if(numOriented == 2){
+				//Turn until there is a yellow sticker on the front of the ULF piece
+				while(cubiePos[0][0][0].getDirOfColor('Y') != 'F') {
+					moves += performMoves("U ");
+				}
+				//Perform Sune algorithm to orient one corner
+				moves += performMoves("R U R' U R U2 R' ");
+			}
+			//Re-check the number of corners oriented
+			numOriented = numYellowCornersOriented();
+		}
+		return moves;
+	}
+	
+	/**
+	 * Permutes the last layer such that all oriented pieces are in the correct positions
+	 * relative to each other. First permutes the corners, then the edges.
+	 * @return
+	 */
+	public String permuteLastLayer() {
+		String moves = new String();
+		//Check the number of "headlights" the exist, i.e. adjacent corners with the same color facing one direction
+		//If there are 4 headlights, the corners are already permuted
+		int numHeadlights = 0;
+		for(int i = 0; i<4; i++) {
+			turn("y"); //Since we are rotating 4 times, the cube is unaffected in the end
+			if(cubiePos[0][0][0].getColorOfDir('F') == cubiePos[2][0][0].getColorOfDir('F'))
+				numHeadlights++;
+		}
+		
+		//Permute the corners
+		if(numHeadlights == 0){ //If no headlights, create headlights first
+			moves += performMoves("R' F' R' B2 R F' R' B2 R2 ");
+			numHeadlights = 1;
+		}
+		if(numHeadlights == 1) {
+			while(cubiePos[0][2][0].getColorOfDir('B') != cubiePos[2][2][0].getColorOfDir('B')) {
+				moves += performMoves("U ");
+			}
+			moves += performMoves("R' F' R' B2 R F' R' B2 R2 ");
+		}
+
+		//Now permute the edges after finding out how many edges are already solved
+		int numSolved = 0;
+		for(int i = 0; i<4; i++) {
+			turn("y");
+			if(cubiePos[0][0][0].getColorOfDir('F') == cubiePos[1][0][0].getColorOfDir('F'))
+				numSolved++;
+		}
+		if(numSolved == 0) { //If no edges are solved, this will solve one edge
+			moves += performMoves("R2 U R U R' U' R' U' R' U R' ");
+			numSolved = 1;
+		}
+		if(numSolved == 1){
+			//Use either the clockwise or counterclockwise edge rotation algorithm to solve all corners
+			while(cubiePos[0][2][0].getColorOfDir('B') != cubiePos[1][2][0].getColorOfDir('B')) {
+				moves += performMoves("U ");
+			}
+			if(cubiePos[1][0][0].getColorOfDir('F') == cubiePos[0][0][0].getColorOfDir('L')) {
+				moves += performMoves("R2 U R U R' U' R' U' R' U R' ");
+			}
+			else {
+				moves += performMoves("R U' R U R U R U' R' U' R2 ");
+			}
+		}
+		
+		//Adjust the U layer to finish the cube
+		while(cubiePos[0][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
+			moves += performMoves("U ");
+		}
+
+		return moves;
+	}
 	
 	/**
 	 * Outputs the position, colors, and respective directions of colors of every cubie making up the cube
