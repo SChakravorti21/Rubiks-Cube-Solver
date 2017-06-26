@@ -10,16 +10,16 @@ public class SolutionFinder {
 		System.out.println("Initializing...");
 		cube = new Cube();
 		//Scramble it up
-		System.out.println("Scramble:" + cube.scramble("F2 D2 B' D2 L2 D2 B' R2 F' L2 F U B F2 R' D L' B U B F'"));
+		System.out.println("Scramble: " + cube.scramble("L R' U2 B2 L2 U2 B2 L D2 R' F2 D B F2 L' D U2 B R' U' L'") + "\n");
 		
 		System.out.println("Making the sunflower:");
 		if(!cube.testCross())
-			System.out.print(cube.makeSunflower() + "\n");
+			System.out.println(cube.makeSunflower() + "\n");
 		
 		System.out.println("Making the white cross:");
 		if(!cube.testCross())
-			System.out.println(cube.makeCross());
-		System.out.println("Made Cross: " + cube.testCross());
+			System.out.println(cube.makeWhiteCross());
+		System.out.println("Made Cross: " + cube.testCross() + "\n");
 		
 		System.out.println("Inserting the white corners:");
 		System.out.println(cube.finishWhiteLayer());
@@ -27,11 +27,19 @@ public class SolutionFinder {
 		System.out.println("Finishing second layer:");
 		System.out.println(cube.insertAllEdges());
 		
+		System.out.println("Making the yellow cross:");
+		System.out.println(cube.makeYellowCross() + "\n");
+		
+		System.out.println("Orienting the last layer:");
+		System.out.println(cube.orientLastLayer() + "\n");
+		
+		System.out.println("Permuting the last layer:");
+		System.out.println(cube.permuteLastLayer() + "\n");
+		
 		long endTime = System.nanoTime();
 		long runtime = endTime - startTime;
 		sum+=runtime;
-		System.out.println("Done in " + (sum/1000000) + " milliseconds");
-		System.out.println("\n\n\n\n");
+		System.out.println("Done in " + (sum/1000000) + " milliseconds" + "\n\n\n\n");
 		
 	}
 }
