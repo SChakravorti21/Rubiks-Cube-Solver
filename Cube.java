@@ -2508,14 +2508,14 @@ public class Cube {
 		
 		//Permute the corners
 		if(numHeadlights == 0){ //If no headlights, create headlights first
-			moves += performMoves("R' F' R' B2 R F' R' B2 R2 ");
+			moves += performMoves("R' F R' B2 R F' R' B2 R2 ");
 			numHeadlights = 1;
 		}
 		if(numHeadlights == 1) {
 			while(cubiePos[0][2][0].getColorOfDir('B') != cubiePos[2][2][0].getColorOfDir('B')) {
 				moves += performMoves("U ");
 			}
-			moves += performMoves("R' F' R' B2 R F' R' B2 R2 ");
+			moves += performMoves("R' F R' B2 R F' R' B2 R2 ");
 		}
 
 		//Now permute the edges after finding out how many edges are already solved
