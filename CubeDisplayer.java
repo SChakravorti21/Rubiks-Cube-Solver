@@ -23,7 +23,6 @@ public class CubeDisplayer extends JFrame{
 			{
 				cubePainter.performNextMove();
 				repaint();
-				System.out.println("hi");
 			}
 		});
 		
