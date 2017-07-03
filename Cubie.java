@@ -1,10 +1,12 @@
 ;
-public abstract class Cubie {
+public class Cubie {
 
 	//Store x, y, and z positions of a cubie
 	private int x;
 	private int y;
 	private int z;
+	private boolean corner;
+	private boolean edge;
 	//Store the set of colors associated with a cubie; accessible to all subclasses
 	protected CubieColor[] colors;
 	
@@ -13,10 +15,13 @@ public abstract class Cubie {
 	 * Sets the location of the cubie
 	 * <param> xPos, yPos, zPos </param>
 	 */
-	public Cubie (int xPos, int yPos, int zPos, CubieColor[] ncolors) {
+	public Cubie (int xPos, int yPos, int zPos, CubieColor[] ncolors, boolean isCorner,
+			boolean isEdge) {
 		x = xPos;
 		y = yPos;
 		z = zPos;
+		corner = isCorner;
+		edge = isEdge;
 		colors = ncolors;
 	}
 	
@@ -81,6 +86,36 @@ public abstract class Cubie {
 		this.colors = newcolors;
 	}
 	
-	public abstract boolean isCornerCubie();
-	public abstract boolean isEdgeCubie();
+	public boolean isCornerCubie() {
+		return corner;
+	}
+	public boolean isEdgeCubie() {
+		return edge;
+	}
+	
+	/**
+	 * Used to aid formation of the white cross
+	 * @return For any EdgeCubie that is NOT in the E Slice, method returns the vertical slice that cubie belongs in
+	 */
+	public char verticalFace(int x, int y) {
+		if(edge) {
+			if(x == 0) return 'L';
+			else if(x == 1) {
+				if(y == 0) {
+					return 'F';
+				}
+				else return 'B';
+			}
+			else return 'R';
+		}
+		return 'A';
+	
+	}
+	
+	public boolean isWhiteCorner() {
+		if(corner) {
+			return (colors[0].getColor()=='W'|| colors[1].getColor()=='W' || colors[2].getColor()=='W');
+		}
+		return false;
+	}
 }
