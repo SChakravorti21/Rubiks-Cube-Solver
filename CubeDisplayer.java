@@ -4,6 +4,7 @@ import java.awt.font.FontRenderContext;
 import javax.swing.*;
 import javax.swing.event.*;
 
+@SuppressWarnings("serial")
 public class CubeDisplayer extends JFrame{
 	CubePainter cubePainter;
 	
@@ -24,7 +25,7 @@ public class CubeDisplayer extends JFrame{
 			public void actionPerformed(ActionEvent e)
 			{
 				cubePainter.performNextMove();
-				cubePainter.repaint(45, 140, 650, 465); //Only repaint the cube, otherwise buttons and text
+				cubePainter.repaint(); //Only repaint the cube, otherwise buttons and text
 										    //are painted over
 			}
 		});
@@ -35,6 +36,7 @@ public class CubeDisplayer extends JFrame{
 	}
 	
 	public static void main(String[] args) {
+		@SuppressWarnings("unused")
 		CubeDisplayer display = new CubeDisplayer();
 	}
 	
@@ -42,6 +44,7 @@ public class CubeDisplayer extends JFrame{
 	}
 }
 
+@SuppressWarnings("serial")
 class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	private JButton start, stop;
 	private JSlider animSpeed;
@@ -49,6 +52,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	
 	private final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
+	private final static Font font = new Font("Monospace", Font.BOLD, 35);
 	public final static int DELAY = 1000;
 	private boolean drawComponents = false;
 	private final static int CUBIE_SIZE = 50;
@@ -80,13 +84,13 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		drawComponents = true;
 		
 		start = new JButton("Start");
-		start.setLocation(250, 10); start.setSize(100,20);
+		start.setLocation(50, 10); start.setSize(100,20);
 		add(start);
 		start.addActionListener(this);
 		start.setVisible(true);
 		
 		stop = new JButton("Stop");
-		stop.setLocation(370, 10); stop.setSize(100,20);
+		stop.setLocation(170, 10); stop.setSize(100,20);
 		add(stop);
 		stop.addActionListener(this);
 		stop.setVisible(true);
@@ -131,8 +135,11 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 			drawComponents = false;
 		}
 		
-		
+		g.setFont(font);
+		g.setColor(Color.RED);
+		g.drawString(movesToPerform.substring(0, movesIndex), 50, 700);
 		g.setColor(Color.BLACK);
+		g.drawString(movesToPerform.substring(movesIndex), 40, 650);
 		((Graphics2D)g).setStroke(s);
 		char[][][] allSets = cube.getColors();
 		
