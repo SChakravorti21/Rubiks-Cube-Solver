@@ -5,8 +5,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public class CubeDisplayer extends JFrame{
-	static CubePainter cubePainter;
-	Timer frameTimer;
+	CubePainter cubePainter;
 	
 	public CubeDisplayer() {
 		setLayout(new BorderLayout());
@@ -17,18 +16,23 @@ public class CubeDisplayer extends JFrame{
 		setVisible(true);
 		setResizable(false);
 		
-		frameTimer = new javax.swing.Timer(100, new ActionListener()
+		cubePainter.setVisible(false);
+		cubePainter.resetScramble("F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' ");
+		
+		cubePainter.frameTimer = new javax.swing.Timer(1000, new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
 				cubePainter.performNextMove();
-				repaint();
+				repaint(45, 140, 650, 465);
 			}
 		});
 		
-		frameTimer.start();
+		cubePainter.setVisible(true);
+		
+		cubePainter.frameTimer.start();
 	}
-
+	
 	public static void main(String[] args) {
 		CubeDisplayer display = new CubeDisplayer();
 	}
@@ -38,7 +42,10 @@ public class CubeDisplayer extends JFrame{
 	}
 }
 
-class CubePainter extends JPanel {
+class CubePainter extends JPanel implements ActionListener{
+	public JButton start, stop;
+	public Timer frameTimer;
+	
 	final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
 	boolean drawOutline = false;
@@ -61,16 +68,40 @@ class CubePainter extends JPanel {
 	 * 6 = PLL
 	 */
 	int phase = 0;
-	
-	int i = 0;
+	int movesIndex = 0;
 	
 	public CubePainter() {
+		setLayout(null);
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		setSize(getPreferredSize());
 		setVisible(true);
 		drawOutline = true;
-		resetScramble("L R' U2 B2 L2 U2 B2 L D2 R' F2 D B F2 L' D U2 B R' U' L'");
 		
+		start = new JButton("Start");
+		start.setLocation(250, 10); start.setSize(100,20);
+		add(start);
+		start.addActionListener(this);
+		start.setVisible(true);
+		
+		stop = new JButton("Stop");
+		stop.setLocation(370, 10); stop.setSize(100,20);
+		add(stop);
+		stop.addActionListener(this);
+		stop.setVisible(true);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == start && !frameTimer.isRunning()) 
+			frameTimer.start();
+		else if(e.getSource() == stop)
+			frameTimer.stop();
+	}
+	
+	public void start() {
+		frameTimer.start();
+	}
+	public void stop() {
+		frameTimer.stop();
 	}
 	
 	public Dimension getPreferredSize(){
@@ -220,8 +251,7 @@ class CubePainter extends JPanel {
 		PLL = cube.permuteLastLayer();
 		
 		movesToPerform = sunflower;
-		System.out.println(movesToPerform);
-		
+
 		cube = new Cube();
 		cube.scramble(scramble);
 	}
@@ -229,37 +259,37 @@ class CubePainter extends JPanel {
 	public void performNextMove() {
 		updatePhase();
 	
-		while(i<movesToPerform.length()-1 && movesToPerform.substring(i, i+1).compareTo(" ") == 0) {
-			i++;
+		while(movesIndex<movesToPerform.length()-1 && movesToPerform.substring(movesIndex, movesIndex+1).compareTo(" ") == 0) {
+			movesIndex++;
 		}
-		if(movesToPerform.substring(i, i+1) != " ") { 
-			if(i!=movesToPerform.length()-1) {
-				if(movesToPerform.substring(i+1, i+2).compareTo("2") == 0) {
+		if(movesToPerform.substring(movesIndex, movesIndex+1) != " ") { 
+			if(movesIndex!=movesToPerform.length()-1) {
+				if(movesToPerform.substring(movesIndex+1, movesIndex+2).compareTo("2") == 0) {
 					//Turning twice ex. U2
-					cube.turn(movesToPerform.substring(i, i+1));
-					cube.turn(movesToPerform.substring(i, i+1));
-					i++;
+					cube.turn(movesToPerform.substring(movesIndex, movesIndex+1));
+					cube.turn(movesToPerform.substring(movesIndex, movesIndex+1));
+					movesIndex++;
 				}
-				else if(movesToPerform.substring(i+1,i+2).compareTo("'") == 0) {
+				else if(movesToPerform.substring(movesIndex+1,movesIndex+2).compareTo("'") == 0) {
 					//Making a counterclockwise turn ex. U'
-					cube.turn(movesToPerform.substring(i, i+2));
-					i++;
+					cube.turn(movesToPerform.substring(movesIndex, movesIndex+2));
+					movesIndex++;
 				}
 				else {
 					//Clockwise turn
-					cube.turn(movesToPerform.substring(i, i+1));
+					cube.turn(movesToPerform.substring(movesIndex, movesIndex+1));
 				}
 			}
 			else {
 				//Clockwise turn
-				cube.turn(movesToPerform.substring(i, i+1));
+				cube.turn(movesToPerform.substring(movesIndex, movesIndex+1));
 			}
 		}
-		i++;
+		movesIndex++;
 	}
 	
 	public void updatePhase() {
-		if(i >= movesToPerform.length()) {
+		if(movesIndex >= movesToPerform.length()) {
 			switch(phase) {
 				case 0: 
 					movesToPerform = whiteCross; break;
@@ -276,7 +306,7 @@ class CubePainter extends JPanel {
 				case 6:
 					movesToPerform = " "; phase--;
 			}
-			phase++; i = 0;
+			phase++; movesIndex = 0;
 		}
 	}
 	
