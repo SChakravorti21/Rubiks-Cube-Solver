@@ -61,7 +61,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	String scramble = new String(), sunflower = new String(), whiteCross = new String(),
 	whiteCorners = new String(), secondLayer = new String(), yellowCross = new String(),
 	OLL = new String(), PLL = new String();
-	String movesToPerform = new String(sunflower);
+	String movesToPerform = new String(), movesPerformed = new String();
 	
 	/*
 	 * Respective stages w.r.t phase variable
@@ -137,9 +137,14 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		
 		g.setFont(font);
 		g.setColor(Color.RED);
-		g.drawString(movesToPerform.substring(0, movesIndex), 50, 700);
+		g.drawString(movesPerformed, 50, 700);
 		g.setColor(Color.BLACK);
-		g.drawString(movesToPerform.substring(movesIndex), 40, 650);
+		if(movesToPerform.substring(movesIndex).length() >= 33) {
+			g.drawString(movesToPerform.substring(movesIndex, movesIndex + 33), 40, 650);
+		}
+		else {
+			g.drawString(movesToPerform.substring(movesIndex), 40, 650);
+		}
 		((Graphics2D)g).setStroke(s);
 		char[][][] allSets = cube.getColors();
 		
@@ -265,6 +270,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		return Color.BLACK;	
 	}
 	
+	
 	public void resetScramble(String s) {
 		scramble = s;
 		cube.scramble(scramble);
@@ -312,7 +318,12 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 			}
 		}
 		movesIndex++;
+		movesPerformed = movesToPerform.substring(0, movesIndex);
+		if(movesPerformed.length() >= 35) {
+			movesPerformed = movesPerformed.substring(movesPerformed.length()-33);
+		}
 	}
+	
 	
 	public void updatePhase() {
 		if(movesIndex >= movesToPerform.length()) {
