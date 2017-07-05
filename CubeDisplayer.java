@@ -19,18 +19,19 @@ public class CubeDisplayer extends JFrame{
 		cubePainter.setVisible(false);
 		cubePainter.resetScramble("F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' ");
 		
-		cubePainter.frameTimer = new javax.swing.Timer(1000, new ActionListener()
+		cubePainter.frameTimer = new javax.swing.Timer(CubePainter.DELAY, new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
 				cubePainter.performNextMove();
-				repaint(45, 140, 650, 465);
+				cubePainter.repaint(45, 140, 650, 465); //Only repaint the cube, otherwise buttons and text
+										    //are painted over
 			}
 		});
 		
 		cubePainter.setVisible(true);
 		
-		cubePainter.frameTimer.start();
+		cubePainter.start();
 	}
 	
 	public static void main(String[] args) {
@@ -38,18 +39,19 @@ public class CubeDisplayer extends JFrame{
 	}
 	
 	public void paint(Graphics g) {
-		cubePainter.paint((Graphics2D)g);
 	}
 }
 
-class CubePainter extends JPanel implements ActionListener{
-	public JButton start, stop;
+class CubePainter extends JPanel implements ActionListener, ChangeListener{
+	private JButton start, stop;
+	private JSlider animSpeed;
 	public Timer frameTimer;
 	
-	final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
+	private final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
-	boolean drawOutline = false;
-	final static int CUBIE_SIZE = 50;
+	public final static int DELAY = 1000;
+	private boolean drawComponents = false;
+	private final static int CUBIE_SIZE = 50;
 	
 	public Cube cube = new Cube();
 	String scramble = new String(), sunflower = new String(), whiteCross = new String(),
@@ -72,10 +74,10 @@ class CubePainter extends JPanel implements ActionListener{
 	
 	public CubePainter() {
 		setLayout(null);
-		setBorder(BorderFactory.createLineBorder(Color.black));
+		//setBorder(BorderFactory.createLineBorder(Color.black));
 		setSize(getPreferredSize());
 		setVisible(true);
-		drawOutline = true;
+		drawComponents = true;
 		
 		start = new JButton("Start");
 		start.setLocation(250, 10); start.setSize(100,20);
@@ -88,13 +90,25 @@ class CubePainter extends JPanel implements ActionListener{
 		add(stop);
 		stop.addActionListener(this);
 		stop.setVisible(true);
+		
+		animSpeed = new JSlider(1, 10); 
+		animSpeed.setMinorTickSpacing(1);
+		animSpeed.setSnapToTicks(true);
+		animSpeed.setLocation(500, 0); animSpeed.setSize(200, 40);
+		add(animSpeed); animSpeed.setVisible(true); animSpeed.addChangeListener(this);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == start && !frameTimer.isRunning()) 
 			frameTimer.start();
-		else if(e.getSource() == stop)
+		if(e.getSource() == stop)
 			frameTimer.stop();
+	}
+	
+	public void stateChanged(ChangeEvent e) {
+		if(e.getSource() == animSpeed) {
+			frameTimer.setDelay(DELAY/animSpeed.getValue());
+		}
 	}
 	
 	public void start() {
@@ -108,10 +122,18 @@ class CubePainter extends JPanel implements ActionListener{
 		return new Dimension(700,900);
 	}
 	
-	public void paint(Graphics2D g) {
+	
+	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		if(drawComponents) {
+			start.paintComponents(g); stop.paintComponents(g); 
+			animSpeed.paintComponents(g);
+			drawComponents = false;
+		}
+		
+		
 		g.setColor(Color.BLACK);
-		g.setStroke(s);
+		((Graphics2D)g).setStroke(s);
 		char[][][] allSets = cube.getColors();
 		
 		int xVal = 50;
@@ -169,60 +191,57 @@ class CubePainter extends JPanel implements ActionListener{
 				g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
 			}
 		}
-		
-		if(drawOutline) {
-			g.setColor(Color.BLACK);
-			xVal = 50;
-			yVal = 300;
-			//Left side
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+
+		//Now draw the outline for the pieces
+		g.setColor(Color.BLACK);
+		xVal = 50;
+		yVal = 300;
+		//Left side
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//Up
-			xVal += CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+		}
+
+		//Up
+		xVal += CUBIE_SIZE*3;
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//Back
-			yVal -= CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+		}
+
+		//Back
+		yVal -= CUBIE_SIZE*3;
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//Front
-			yVal += CUBIE_SIZE*6;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+		}
+
+		//Front
+		yVal += CUBIE_SIZE*6;
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//Left
-			xVal += CUBIE_SIZE*3;
-			yVal -= CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+		}
+
+		//Left
+		xVal += CUBIE_SIZE*3;
+		yVal -= CUBIE_SIZE*3;
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//Down
-			xVal += CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
+		}
+
+		//Down
+		xVal += CUBIE_SIZE*3;
+		for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
+			for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
+				g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
 			}
-			
-			//drawOutline = false;
 		}
 		
 	}
