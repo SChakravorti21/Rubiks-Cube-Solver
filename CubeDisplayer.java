@@ -9,6 +9,7 @@ public class CubeDisplayer extends JFrame{
 	CubePainter cubePainter;
 	
 	public CubeDisplayer() {
+		setTitle("Cube Displayer");
 		setLayout(new BorderLayout());
 		setSize(700, 900);
 		cubePainter = new CubePainter();
@@ -31,8 +32,6 @@ public class CubeDisplayer extends JFrame{
 		});
 		
 		cubePainter.setVisible(true);
-		
-		cubePainter.start();
 	}
 	
 	public static void main(String[] args) {
@@ -46,21 +45,23 @@ public class CubeDisplayer extends JFrame{
 
 @SuppressWarnings("serial")
 class CubePainter extends JPanel implements ActionListener, ChangeListener{
-	private JButton start, stop;
+	private JButton start, stop, applyScramble;
 	private JSlider animSpeed;
+	private JTextField inputScramble;
 	public Timer frameTimer;
 	
 	private final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
 	private final static Font font = new Font("Monospace", Font.BOLD, 35);
-	public final static int DELAY = 1000;
+	public final static int DELAY = 1500;
 	private boolean drawComponents = false;
 	private final static int CUBIE_SIZE = 50;
 	
 	public Cube cube = new Cube();
-	String scramble = new String(), sunflower = new String(), whiteCross = new String(),
-	whiteCorners = new String(), secondLayer = new String(), yellowCross = new String(),
-	OLL = new String(), PLL = new String();
+	String scramble = new String("F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' "),
+	sunflower = new String(), whiteCross = new String(),
+	whiteCorners = new String(), secondLayer = new String(), 
+	yellowCross = new String(), OLL = new String(), PLL = new String();
 	String movesToPerform = new String(), movesPerformed = new String();
 	
 	/*
@@ -95,18 +96,36 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		stop.addActionListener(this);
 		stop.setVisible(true);
 		
-		animSpeed = new JSlider(1, 10); 
-		animSpeed.setMinorTickSpacing(1);
+		animSpeed = new JSlider(1, 10); animSpeed.setValue(1);
+		animSpeed.setMinorTickSpacing(1); animSpeed.setPaintTicks(true);
 		animSpeed.setSnapToTicks(true);
 		animSpeed.setLocation(500, 0); animSpeed.setSize(200, 40);
 		add(animSpeed); animSpeed.setVisible(true); animSpeed.addChangeListener(this);
+		
+		inputScramble = new JTextField(scramble); 
+		inputScramble.setLocation(170, 40); inputScramble.setSize(400, 40); 
+		inputScramble.setEnabled(true); inputScramble.setFocusable(true); 
+		inputScramble.setBorder(BorderFactory.createLineBorder(Color.black)); 
+		inputScramble.setFont(new Font("Monospace", Font.BOLD, 15));
+		add(inputScramble);
+		
+		applyScramble = new JButton("RESET");
+		applyScramble.setLocation(590, 50); applyScramble.setSize(100,20);
+		add(applyScramble);
+		applyScramble.addActionListener(this); applyScramble.setVisible(true);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == start && !frameTimer.isRunning()) 
-			frameTimer.start();
-		if(e.getSource() == stop)
-			frameTimer.stop();
+		if (e.getSource() == start) 
+			start();
+		else if(e.getSource() == stop)
+			stop();
+		else if(e.getSource() == applyScramble) {
+			stop();
+			setVisible(false); 
+			resetScramble(inputScramble.getText());
+			setVisible(true);
+		}
 	}
 	
 	public void stateChanged(ChangeEvent e) {
@@ -132,9 +151,12 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		if(drawComponents) {
 			start.paintComponents(g); stop.paintComponents(g); 
 			animSpeed.paintComponents(g);
+			inputScramble.paintComponents(g);
 			drawComponents = false;
 		}
 		
+		g.setFont(new Font("Monospace", Font.BOLD, 25));
+		g.drawString("Scramble: ", 30, 70);
 		g.setFont(font);
 		g.setColor(Color.RED);
 		g.drawString(movesPerformed, 50, 700);
@@ -273,7 +295,8 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	
 	public void resetScramble(String s) {
 		scramble = s;
-		cube.scramble(scramble);
+		cube = new Cube();
+		cube.scramble(s);
 		sunflower = cube.makeSunflower();
 		whiteCross = cube.makeWhiteCross();
 		whiteCorners = cube.finishWhiteLayer();
@@ -283,9 +306,12 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		PLL = cube.permuteLastLayer();
 		
 		movesToPerform = sunflower;
+		movesPerformed = new String();
 
 		cube = new Cube();
-		cube.scramble(scramble);
+		cube.scramble(s);
+		movesIndex = 0; phase = 0;
+		repaint();
 	}
 	
 	public void performNextMove() {
