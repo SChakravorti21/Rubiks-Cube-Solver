@@ -12,50 +12,78 @@ public class Cube {
 	 * The core of the cube is not an actual cubie, but is instantiated as one to prevent runtime error 
 	 */
 	public Cube() {
-		//Up, Front Row
-		cubiePos[0][0][0] = new CornerCubie(0,0,0,'Y','U','R','L','G','F');
-		cubiePos[1][0][0] = new EdgeCubie(1,0,0,'Y','U','G','F');
-		cubiePos[2][0][0] = new CornerCubie(2,0,0,'Y','U','G','F','O','R');
+		//Up Front Row
+		cubiePos[0][0][0] = new Cubie(0,0,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('R','L'), new CubieColor('G','F')}, true, false);
+		cubiePos[1][0][0] = new Cubie(1,0,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('G','F')}, false, true);
+		cubiePos[2][0][0] = new Cubie(2,0,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('G','F'), new CubieColor('O','R')}, true, false);
 
 		//Front E Row
-		cubiePos[0][0][1] = new EdgeCubie(0,0,1,'R','L','G','F');
-		cubiePos[1][0][1] = new CenterPiece(1,0,1,'G','F');
-		cubiePos[2][0][1] = new EdgeCubie(2,0,1,'G','F','O','R');
+		cubiePos[0][0][1] = new Cubie(0,0,1, 
+				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('G','F')}, false, true);
+		cubiePos[1][0][1] = new Cubie(1,0,1, 
+				new CubieColor[]{ new CubieColor('G','F')}, false, false);
+		cubiePos[2][0][1] = new Cubie(2,0,1, 
+				new CubieColor[]{ new CubieColor('G','F'), new CubieColor('O','R')}, false, true);
 
-		//Down, Front Row
-		cubiePos[0][0][2] = new CornerCubie(0,0,2,'R','L','G','F','W','D');
-		cubiePos[1][0][2] = new EdgeCubie(1,0,2,'G','F','W','D');
-		cubiePos[2][0][2] = new CornerCubie(2,0,2,'G','F','W','D','O','R');
+		//Down Front Row
+		cubiePos[0][0][2] = new Cubie(0,0,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('R','L'), new CubieColor('G','F')}, true, false);
+		cubiePos[1][0][2] = new Cubie(1,0,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('G','F')}, false, true);
+		cubiePos[2][0][2] = new Cubie(2,0,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('G','F'), new CubieColor('O','R')}, true, false);
 
 		//Up S Row
-		cubiePos[0][1][0] = new EdgeCubie(0,1,0,'R','L','Y','U');
-		cubiePos[1][1][0] = new CenterPiece(1,1,0,'Y','U');
-		cubiePos[2][1][0] = new EdgeCubie(2,1,0,'Y','U','O','R');
+		cubiePos[0][1][0] = new Cubie(0,1,0, 
+				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('Y','U')}, false, true);
+		cubiePos[1][1][0] = new Cubie(1,1,0, 
+				new CubieColor[]{ new CubieColor('Y','U')}, false, false);
+		cubiePos[2][1][0] = new Cubie(2,1,0, 
+				new CubieColor[]{ new CubieColor('Y','U'), new CubieColor('O','R')}, false, true);
 
 		//E S Row
-		cubiePos[0][1][1] = new CenterPiece(0,1,1,'R','L');
-		cubiePos[1][1][1] = new CenterPiece(1,1,1,'A','A'); //Just giving random, non-legitimate values for color and direction
-		cubiePos[2][1][1] = new CenterPiece(2,1,1,'O','R');
+		cubiePos[0][1][1] = new Cubie(0,1,1, 
+				new CubieColor[]{ new CubieColor('R','L')}, false, false);
+		cubiePos[1][1][1] = new Cubie(1,1,1, 
+				new CubieColor[]{ new CubieColor('A','A')}, //Just giving random, non-legitimate values for color and direction
+				false, false);
+		cubiePos[2][1][1] = new Cubie(2,1,1, 
+				new CubieColor[]{ new CubieColor('O','R')}, false, false);
 
 		//Down S Row
-		cubiePos[0][1][2] = new EdgeCubie(0,1,2,'R','L','W','D');
-		cubiePos[1][1][2] = new CenterPiece(1,1,2,'W','D');
-		cubiePos[2][1][2] = new EdgeCubie(2,1,2,'W','D','O','R');
+		cubiePos[0][1][2] = new Cubie(0,1,2, 
+				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('W','D')}, false, true);
+		cubiePos[1][1][2] = new Cubie(1,1,2, 
+				new CubieColor[]{ new CubieColor('W','D')}, false, false);
+		cubiePos[2][1][2] = new Cubie(2,1,2, 
+				new CubieColor[]{ new CubieColor('W','D'), new CubieColor('O','R')}, false, true);
 
 		//Up Back Row
-		cubiePos[0][2][0] = new CornerCubie(0,2,0,'Y','U','R','L','B','B');
-		cubiePos[1][2][0] = new EdgeCubie(1,2,0,'Y','U','B','B');
-		cubiePos[2][2][0] = new CornerCubie(2,2,0,'Y','U','B','B','O','R');
+		cubiePos[0][2][0] = new Cubie(0,2,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('R','L'), new CubieColor('B','B')}, true, false);
+		cubiePos[1][2][0] = new Cubie(1,2,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('B','B')}, false, true);
+		cubiePos[2][2][0] = new Cubie(2,2,0, 
+				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('B','B'), new CubieColor('O','R')}, true, false);
 
 		//E Back Row
-		cubiePos[0][2][1] = new EdgeCubie(0,2,1,'R','L','B','B');
-		cubiePos[1][2][1] = new CenterPiece(1,2,1,'B','B');
-		cubiePos[2][2][1] = new EdgeCubie(2,2,1,'B','B','O','R');
+		cubiePos[0][2][1] = new Cubie(0,2,1, 
+				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('B','B')}, false, true);
+		cubiePos[1][2][1] = new Cubie(1,2,1, 
+				new CubieColor[]{ new CubieColor('B','B')}, false, false);
+		cubiePos[2][2][1] = new Cubie(2,2,1, 
+				new CubieColor[]{ new CubieColor('B','B'), new CubieColor('O','R')}, false, true);
 
 		//Down Back Row
-		cubiePos[0][2][2] = new CornerCubie(0,2,2,'R','L','B','B','W','D');
-		cubiePos[1][2][2] = new EdgeCubie(1,2,2,'B','B','W','D');
-		cubiePos[2][2][2] = new CornerCubie(2,2,2,'B','B','W','D','O','R');
+		cubiePos[0][2][2] = new Cubie(0,2,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('R','L'), new CubieColor('B','B')}, true, false);
+		cubiePos[1][2][2] = new Cubie(1,2,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('B','B')}, false, true);
+		cubiePos[2][2][2] = new Cubie(2,2,2, 
+				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('B','B'), new CubieColor('O','R')}, true, false);
 
 	}
 
@@ -1834,8 +1862,7 @@ public class Cube {
 			for(int i = 0; i < 3; i++) {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][0].isEdgeCubie()) {
-						EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][0];
-						CubieColor[] tempColors = tempCubie.getColors();
+						CubieColor[] tempColors = cubiePos[i][j][0].getColors();
 						if(tempColors[0].getColor() == 'W' || tempColors[1].getColor() == 'W')
 							for(int k = 0; k<2; k++) {
 								//Check for when the white edge is matched up with the respective face
@@ -1843,7 +1870,7 @@ public class Cube {
 										(tempColors[k].getColor() == 'G' && tempColors[k].getDir() == 'F') ||
 										(tempColors[k].getColor() == 'O' && tempColors[k].getDir() == 'R')||
 										(tempColors[k].getColor() == 'B' && tempColors[k].getDir() == 'B')) {
-									moves+=performMoves(tempCubie.verticalFace(i, j) + "2 ") ;
+									moves+=performMoves(cubiePos[i][j][0].verticalFace(i, j) + "2 ") ;
 									numOriented = numWhiteEdgesOriented();
 								}
 							}
@@ -1871,9 +1898,8 @@ public class Cube {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][2].isEdgeCubie()) {
 						if(cubiePos[i][j][2].getDirOfColor('W') == 'D') {
-							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
 							moves += prepareSlot(i, j, 0, 'W');
-							char turnToMake = tempCubie.verticalFace(i, j);
+							char turnToMake = cubiePos[i][j][2].verticalFace(i, j);
 							moves += performMoves("" + turnToMake + "2 ");
 						}
 					}
@@ -1888,8 +1914,7 @@ public class Cube {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][2].isEdgeCubie()) {
 						if(cubiePos[i][j][2].getDirOfColor('W') != 'A' && cubiePos[i][j][2].getDirOfColor('W') != 'D') {
-							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][2];
-							char vert = tempCubie.verticalFace(i, j);
+							char vert = cubiePos[i][j][2].verticalFace(i, j);
 							moves += prepareSlot(i, j, 0, 'W');
 
 							if(vert == 'F') {
@@ -1971,8 +1996,7 @@ public class Cube {
 				for(int j = 0; j < 3; j++) {
 					if(cubiePos[i][j][0].isEdgeCubie()) {
 						if(cubiePos[i][j][0].getDirOfColor('W') != 'A' && cubiePos[i][j][0].getDirOfColor('W') != 'U') {
-							EdgeCubie tempCubie = (EdgeCubie)cubiePos[i][j][0];
-							char vert = tempCubie.verticalFace(i, j);
+							char vert = cubiePos[i][j][0].verticalFace(i, j);
 							if(vert == 'F') {
 								performMoves("F U' R");
 								moves+= "F U' R";
@@ -2099,8 +2123,7 @@ public class Cube {
 			for(int i = 0; i<3; i++) {
 				for(int j = 0; j<3; j++) {
 					if(cubiePos[i][j][0].isCornerCubie()) {
-						CornerCubie tempCubie = (CornerCubie)cubiePos[i][j][0];
-						if(tempCubie.isWhiteCorner()) {
+						if(cubiePos[i][j][0].isWhiteCorner()) {
 							//Make U turns until cubie is at (2, 0, 0)
 							if(i==0) {
 								if(j==0) {
@@ -2172,8 +2195,7 @@ public class Cube {
 		for(int i = 0; i<4; i++) {
 			moves += performMoves("y ");
 			if(!cornerInserted(2,0,2)) {
-				CornerCubie tempCubie = (CornerCubie)cubiePos[2][0][2];
-				if(tempCubie.isWhiteCorner()) {
+				if(cubiePos[2][0][2].isWhiteCorner()) {
 					if(!cornerInserted(2,0,2)) {
 						//Use R U R' U' to get corner to U layer, then insert it in appropriate slot
 						moves+=performMoves("R U R' U' ");
@@ -2541,13 +2563,66 @@ public class Cube {
 				moves += performMoves("R U' R U R U R U' R' U' R2 ");
 			}
 		}
-		
 		//Adjust the U layer to finish the cube
+		
 		while(cubiePos[0][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
 			moves += performMoves("U ");
 		}
-
+		
 		return moves;
+	}
+	
+	public char[][][] getColors() {
+		char[][][] allSets = new char[6][3][3];
+		//All 2D arrays are row-major
+		char[][] left = new char[3][3];
+		char[][] up = new char[3][3];
+		char[][] front = new char[3][3];
+		char[][] back = new char[3][3];
+		char[][] right = new char[3][3];
+		char[][] down = new char[3][3];
+		
+		//Populate left colors, constant x
+		for(int y = 2; y>=0; y--) {
+			for(int z = 2; z>=0; z--) {
+				left[Math.abs(y-2)][Math.abs(z-2)] = cubiePos[0][y][z].getColorOfDir('L');
+			}
+		}
+		//Up colors, constant z
+		for(int x = 0; x<=2; x++) {
+			for(int y = 2; y>=0; y--) {
+				up[Math.abs(y-2)][x] = cubiePos[x][y][0].getColorOfDir('U');
+			}
+		}
+		//Front colors, constant y
+		for(int z = 0; z<=2; z++) {
+			for(int x = 0; x<=2; x++) {
+				front[z][x] = cubiePos[x][0][z].getColorOfDir('F');
+			}
+		}
+		//Back colors, constant y
+		for(int x = 0; x<=2; x++) {
+			for(int z = 2; z>=0; z--) {
+				back[Math.abs(z-2)][x] = cubiePos[x][2][z].getColorOfDir('B');
+			}
+		}
+		//Right colors, constant x
+		for(int y = 2; y>=0; y--) {
+			for(int z = 0; z<=2; z++) {
+				right[Math.abs(y-2)][z] = cubiePos[2][y][z].getColorOfDir('R');
+			}
+		}
+		//Down colors, constant z
+		for(int x = 2; x>=0; x--) {
+			for(int y = 2; y>=0; y--) {
+				down[Math.abs(y-2)][Math.abs(x-2)] = cubiePos[x][y][2].getColorOfDir('D');
+			}
+		}
+		
+		allSets[0] = left; allSets[1] = up; allSets[2] = front; allSets[3] = back;
+		allSets[4] = right; allSets[5] = down;
+		return allSets;
+		
 	}
 	
 	/**
