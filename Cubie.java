@@ -86,9 +86,18 @@ public class Cubie {
 		this.colors = newcolors;
 	}
 	
+	/**
+	 * Returns whether the cubie is a corner cubie
+	 * @return whether corner cubie
+	 */
 	public boolean isCornerCubie() {
 		return corner;
 	}
+	
+	/**
+	 * Returns whether the cubie is an edge cubie
+	 * @return whether edge cubie
+	 */
 	public boolean isEdgeCubie() {
 		return edge;
 	}
@@ -112,6 +121,11 @@ public class Cubie {
 	
 	}
 	
+	/**
+	 * If the cubie is a corner cubie, method returns whether the cubie is a white corner
+	 * Returns false if cubie is not a corner cubie
+	 * @return whether corner cubie
+	 */
 	public boolean isWhiteCorner() {
 		if(corner) {
 			return (colors[0].getColor()=='W'|| colors[1].getColor()=='W' || colors[2].getColor()=='W');
