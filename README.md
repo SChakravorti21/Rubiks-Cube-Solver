@@ -1,6 +1,20 @@
 # cube-solver
 Java program to find a solution to a given scramble for a Rubik's Cube
 
+# v1.2
+Incorporated interactive elements into GUI.
+
+Additions:
+
+ - Start and stop buttons to play/pause animation of cube being solved
+ - A slider to adjust the animation speed
+ - A text field to input a unique scramble and find the solution
+ - Text at bottom of screen to display the moves that need to be performed (black font) and moves that are completed (red font)
+ 
+ Modifications:
+ 
+  - Full eradication of CornerCubie, EdgeCubie, and CenterPiece objects in Cube class (all functionalities for cubies consolidated into Cubie class)
+
 # v1.1
 Added CubeDisplayer and CubePainter classes that sequentially step through the moves required to solve a scrambled cube and repaint the cube after each move. Will add functionality to play and pause the animation, as well as enter a custom scramble in a text field.
 
