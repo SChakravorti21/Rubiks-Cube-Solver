@@ -35,4 +35,12 @@ public class CubieColor {
 		dir = ndir;
 	}
 	
+	/**
+	 * Sets the color to the parameter
+	 * @param ncolor
+	 */
+	public void setColor(char ncolor) {
+		color = ncolor;
+	}
+	
 }

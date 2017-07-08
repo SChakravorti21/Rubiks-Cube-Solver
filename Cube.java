@@ -2629,6 +2629,16 @@ public class Cube {
 	}
 	
 	/**
+	 * Changes a single color of a cubie to a new color in the given direction
+	 * @param x, y, z: position
+	 * @param dir: direction
+	 * @param ncolor: new color
+	 */
+	public void setCubieColor(int x, int y, int z, char dir, char ncolor) {
+		cubiePos[x][y][z].setColorOfDir(dir, ncolor);
+	}
+	
+	/**
 	 * Outputs the position, colors, and respective directions of colors of every cubie making up the cube.
 	 * Used for debugging purposes prior to GUI development.
 	 * Outputs in the format: x, y, z, color1, dir1, color2, dir2, color3, dir3 (number of colors and directions dependent on cubie type)
