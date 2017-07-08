@@ -4,11 +4,26 @@ import java.awt.font.FontRenderContext;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public class CubeDisplayer extends JFrame{
+public class CubeDisplayer extends JFrame implements ActionListener{
 	//Auto-generated ID
 	private static final long serialVersionUID = -3198702237161500498L;
 	CubePainter cubePainter; //The JPanel that will handle painting and user input
+	JMenuBar menuBar;
+	JMenu modes;
+	JMenuItem colorSelection, scramble;
+	//JMenuItem colorSelection, scramble;
 	
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {				
+				new CubeDisplayer();
+			}
+		});	
+	}
+
+
 	/**
 	 * Creates a new CubeDisplayer and initializes it with a new CubePainter for the user
 	 * to interact with.
@@ -16,21 +31,25 @@ public class CubeDisplayer extends JFrame{
 	public CubeDisplayer() {
 		setTitle("Cube Displayer");
 		setLayout(new BorderLayout());
-		setSize(700, 900);
+		setSize(700, 770);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		setVisible(true);
 		setResizable(false);
-		
+
+		menuBar = new JMenuBar();
+		modes = new CubeMenu("Mode Selection", this);
+		colorSelection = new JMenuItem("Color Selection Mode");
+		scramble = new JMenuItem("Text Scramble Mode");
+		modes.add(colorSelection);
+		modes.add(scramble);
+		menuBar.add(modes);
+		setJMenuBar(menuBar);
+
 		//Create a new CubePainter JPanel
 		cubePainter = new CubePainter();
 		add(cubePainter);
-		
-		//Set the JPanel as not being visible while cube is being scrambled
-		//(While the cube is being scrambled, screen will show nonsensical colors, such as black)
-		cubePainter.setVisible(false);
-		cubePainter.resetScramble("F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' ");
-		cubePainter.setVisible(true);
-		
+		cubePainter.repaint();
+
 		//Initialize the frame timer
 		//NOTE: For whatever reason, initializing the frame timer within the CubePainter constructor does not seem to work
 		cubePainter.frameTimer = new javax.swing.Timer(CubePainter.DELAY, new ActionListener()
@@ -40,14 +59,17 @@ public class CubeDisplayer extends JFrame{
 				cubePainter.performNextMove();
 				cubePainter.repaint(); //Only repaint the JPanel, not the JFrame (to preserve all interactive features)
 			}
-		});
+		});	
 	}
-	
-	public static void main(String[] args) {
-		CubeDisplayer display = new CubeDisplayer();
+
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == colorSelection) {
+			cubePainter.stop();
+		}
+		if(e.getSource() == scramble) {
+			cubePainter.start();
+		}
 	}
-	
-	
 }
 
 class CubePainter extends JPanel implements ActionListener, ChangeListener{
@@ -107,23 +129,20 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		
 		//Initialize all buttons, sliders and text fields
 		start = new JButton("Start");
-		start.setLocation(50, 10); start.setSize(100,20);
+		start.setLocation(50, 10); start.setSize(60,20);
 		add(start);
 		start.addActionListener(this);
-		start.setVisible(true);
 		
 		stop = new JButton("Stop");
-		stop.setLocation(170, 10); stop.setSize(100,20);
+		stop.setLocation(130, 10); stop.setSize(60,20);
 		add(stop);
 		stop.addActionListener(this);
-		stop.setVisible(true);
 		
 		animSpeed = new JSlider(1, 10); animSpeed.setValue(1); //Slider values range from 1 to 10
 		animSpeed.setMinorTickSpacing(1); animSpeed.setPaintTicks(true);
 		animSpeed.setSnapToTicks(true);
 		animSpeed.setLocation(500, 0); animSpeed.setSize(200, 40);
 		add(animSpeed); 
-		animSpeed.setVisible(true); 
 		animSpeed.addChangeListener(this);
 		
 		inputScramble = new JTextField(scramble); 
@@ -137,7 +156,6 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		applyScramble.setLocation(590, 50); applyScramble.setSize(100,20);
 		add(applyScramble);
 		applyScramble.addActionListener(this); 
-		applyScramble.setVisible(true);
 	}
 	
 	/**
@@ -185,7 +203,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	 * @return default dimensions of CubePainter
 	 */
 	public Dimension getPreferredSize(){
-		return new Dimension(700,900);
+		return new Dimension(700,770);
 	}
 	
 	/**
@@ -381,7 +399,6 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 		//If the cube is being scrambled newly after intiliazing is complete and animation has begun,
 		//be sure to reset all reference indexes
 		movesIndex = 0; phase = 0;
-		
 		repaint();
 	}
 	
@@ -460,4 +477,20 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener{
 	}
 	
 	
+}
+
+class CubeMenu extends JMenu {
+	//Auto-generated ID
+	private static final long serialVersionUID = 7730471936826831950L;
+	ActionListener actionlistener;
+	
+	public CubeMenu(String name, ActionListener listener) {
+		super(name);
+		actionListener = listener;
+	}
+	
+	public JMenuItem add(JMenuItem item) {
+		item.addActionListener(actionListener);
+		return super.add(item);
+	}
 }
