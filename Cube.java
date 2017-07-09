@@ -2658,7 +2658,55 @@ public class Cube {
 		}
 	}
 
-	
+	public char[][] getColorsOfSide(char side) {
+		char[][] colors = new char[3][3];
+		switch(side) {
+		case('L') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[0][Math.abs(j-2)][i].getColorOfDir('L');
+				}
+			}
+			break;
+		case('U') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[j][Math.abs(i-2)][0].getColorOfDir('U');
+				}
+			}
+			break;
+		case('F') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[j][0][i].getColorOfDir('F');
+				}
+			}
+			break;
+		case('B') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[Math.abs(j-2)][2][i].getColorOfDir('B');
+				}
+			}
+			break;
+		case('R') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[2][j][i].getColorOfDir('R');
+				}
+			}
+			break;
+		case('D') :
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					colors[i][j] = cubiePos[j][i][2].getColorOfDir('D');
+				}
+			}
+			break;
+		}
+		
+		return colors;
+	}
 
 
 }

@@ -145,6 +145,8 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		inSolution = true;
 		mode = TEXT_SCRAMBLE;
 		colorSelected = 'R';
+		sideChosen = 'L';
+		
 		try {
 			robot = new Robot();
 		}
@@ -186,15 +188,23 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		add(applyScramble);
 		applyScramble.addActionListener(this); 
 		
-		sideChoser = new JComboBox<String>(new String[]{"Red", "Green", "Blue", "Yellow", "Orange", "White"} );
+		sideChoser = new JComboBox<String>(new String[]{"Left", "Up", "Back", "Front", "Right", "Down"} );
 		sideChoser.setLocation(270, 100); sideChoser.setSize(100, 30);
 		add(sideChoser);
 		sideChoser.addActionListener(this);
 		sideChoser.setVisible(false); sideChoser.setEnabled(false);
 		
-		colorInputs = new JButton[] {new JButton("Red"), new JButton("Green"), new JButton("Blue"),
-				new JButton("Yellow"), new JButton("Orange"), new JButton("White")};
+		colorInputs = new JButton[6];
 		for(int i = 0; i<6; i++) {
+			colorInputs[i] = new JButton();
+			switch(i) {
+				case(0): colorInputs[i].setName("Red");		break;
+				case(1): colorInputs[i].setName("Green"); 	break;
+				case(2): colorInputs[i].setName("Blue"); 	break;
+				case(3): colorInputs[i].setName("Yellow"); 	break;
+				case(4): colorInputs[i].setName("Orange"); 	break;
+				case(5): colorInputs[i].setName("White"); 	break;
+			}
 			colorInputs[i].setLocation(100 + CUBIE_SIZE*i + CUBIE_SIZE/2*i, 450);
 			colorInputs[i].setSize(CUBIE_SIZE, CUBIE_SIZE);
 			colorInputs[i].setEnabled(false); colorInputs[i].setVisible(false);
@@ -220,13 +230,13 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 			setVisible(true);
 		}
 		else if(e.getSource() == sideChoser) {
-			//TO-DO LATER
+			sideChosen = ((String)sideChoser.getSelectedItem()).charAt(0);
+			repaint(250, 200, CUBIE_SIZE*3, CUBIE_SIZE*3);
 		}
 		else {
 			JButton colorInput = (JButton)e.getSource();
-			colorSelected = colorInput.getText().charAt(0);
+			colorSelected = colorInput.getName().charAt(0);
 			repaint(400, 465 + CUBIE_SIZE*2, CUBIE_SIZE, CUBIE_SIZE);
-			System.out.println(colorSelected);
 		}
 	}
 
@@ -278,51 +288,37 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		
 		if(mode.equals(COLOR_SELECTION)) {
 			if(!inSolution) {
+				//Paint the color selection boxes
 				((Graphics2D)g).setStroke(s);
 				int xVal = 100; int yVal = 450;
-				g.setColor(Color.RED);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
+				for(int i = 0; i<6; i++) {
+					switch(i) {
+						case(0): g.setColor(Color.RED); 		break;
+						case(1): g.setColor(Color.GREEN); 	break;
+						case(2): g.setColor(Color.BLUE); 	break;
+						case(3): g.setColor(Color.YELLOW); 	break;
+						case(4): g.setColor(Color.ORANGE); 	break;
+						case(5): g.setColor(Color.WHITE); 	break;
+					}
+					g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
+					g.setColor(Color.BLACK);
+					g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
+					xVal += CUBIE_SIZE*1.5;
+				}
 				
-				xVal += CUBIE_SIZE*1.5;
-				g.setColor(Color.GREEN);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				
-				xVal += CUBIE_SIZE*1.5;
-				g.setColor(Color.BLUE);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				
-				xVal += CUBIE_SIZE*1.5;
-				g.setColor(Color.YELLOW);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				
-				xVal += CUBIE_SIZE*1.5;
-				g.setColor(Color.ORANGE);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				
-				xVal += CUBIE_SIZE*1.5;
-				g.setColor(Color.WHITE);
-				g.fillRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				g.setColor(Color.BLACK);
-				g.drawRect(xVal, yVal, CUBIE_SIZE, CUBIE_SIZE);
-				
+				//Paint the chosen cube side
 				xVal = 250; yVal = 200;
-				g.setColor(Color.BLACK);
-				for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-					for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-						g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
+				char[][] sideColors = cube.getColorsOfSide(sideChosen);
+				for(int i = 0; i<3; i++){
+					for(int j = 0; j<3; j++) {
+						g.setColor(getColor(sideColors[i][j]));
+						g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+						g.setColor(Color.BLACK);
+						g.drawRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
 					}
 				}
 				
+				//Paint the color that is selected so user is sure to paint correct color
 				g.setFont(font);
 				g.drawString("Selected Color:", 100, 500 + CUBIE_SIZE*2);
 				g.setColor(getColor(colorSelected));
@@ -348,116 +344,44 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 				}
 			}
 
-			//Print the cube itself now
+			//Draw the cube itself now
 			((Graphics2D)g).setStroke(s);
 			char[][][] allSets = cube.getColors();
-
 			int xVal = 50;
 			int yVal = 300;
-			//Left side
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[0][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+			for(int k = 0; k<6; k++) {
+				switch(k) {
+					case(1): xVal += CUBIE_SIZE*3;; 	break;
+					case(2): yVal += CUBIE_SIZE*3; 	break;
+					case(3): yVal -= CUBIE_SIZE*6;	break;
+					case(4): xVal += CUBIE_SIZE*3;
+							 yVal += CUBIE_SIZE*3; 	break;
+					case(5): xVal += CUBIE_SIZE*3; 	break;
+				}
+				for(int i = 0; i<3; i++){
+					for(int j = 0; j<3; j++) {
+						g.setColor(getColor(allSets[k][i][j]));
+						g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+					}
 				}
 			}
-
-			//Up
-			xVal += CUBIE_SIZE*3;
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[1][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+			
+			//Draw the outline
+			for(int k = 0; k<6; k++) {
+				switch(k) {
+					case(0): xVal = 50; yVal = 300; break;
+					case(1): xVal += CUBIE_SIZE*3;; 	break;
+					case(2): yVal += CUBIE_SIZE*3; 	break;
+					case(3): yVal -= CUBIE_SIZE*6;	break;
+					case(4): xVal += CUBIE_SIZE*3;
+							 yVal += CUBIE_SIZE*3; 	break;
+					case(5): xVal += CUBIE_SIZE*3; 	break;
 				}
-			}
-
-			//Back
-			yVal -= CUBIE_SIZE*3;
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[3][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Front
-			yVal += CUBIE_SIZE*6;
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[2][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Right
-			xVal += CUBIE_SIZE*3;
-			yVal -= CUBIE_SIZE*3;
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[4][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Down
-			xVal += CUBIE_SIZE*3;
-			for(int i = 0; i<3; i++){
-				for(int j = 0; j<3; j++) {
-					g.setColor(getColor(allSets[5][i][j]));
-					g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-
-			//Now draw the outline for the pieces
-			g.setColor(Color.BLACK);
-			xVal = 50;
-			yVal = 300;
-			//Left side
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Up
-			xVal += CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Back
-			yVal -= CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Front
-			yVal += CUBIE_SIZE*6;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Left
-			xVal += CUBIE_SIZE*3;
-			yVal -= CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
-				}
-			}
-
-			//Down
-			xVal += CUBIE_SIZE*3;
-			for(int i = xVal; i<xVal+CUBIE_SIZE*3; i+=CUBIE_SIZE){
-				for(int j = yVal; j<yVal+CUBIE_SIZE*3; j+=CUBIE_SIZE) {
-					g.drawRect(i, j, CUBIE_SIZE, CUBIE_SIZE);
+				for(int i = 0; i<3; i++){
+					for(int j = 0; j<3; j++) {
+						g.setColor(Color.BLACK);
+						g.drawRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+					}
 				}
 			}
 		}
