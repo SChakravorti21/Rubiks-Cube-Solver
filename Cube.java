@@ -2658,34 +2658,49 @@ public class Cube {
 		}
 	}
 
+	/**
+	 * Sets all the colors of the cube to the colors inputed by the user during color selection mode.
+	 * Invoked from the CubePainter class when user decides to proceed to solution after inputing colors.
+	 * The colors inputed as the colors[][][] parameter are in a slightly different state than the colors
+	 * produced by the getColors() method. If the side is not the yellow or white side, then the user
+	 * inputed the colors when yellow is above and white is below the desired face. If the face is the yellow
+	 * face, the user inputed as if blue was above and green was below the yellow face, the blue and green
+	 * being in the opposite orientation for when inputing colors on the white face.
+	 * @param colors 
+	 */
 	public void setAllColors(char[][][] colors) {
-		
+		//Set Left colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[0][Math.abs(j-2)][i].setColorOfDir('L', colors[0][i][j]);
 			}
 		}
+		//Set Up colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[j][Math.abs(i-2)][0].setColorOfDir('U', colors[1][i][j]);
 			}
 		}
+		//Set Front colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[j][0][i].setColorOfDir('F', colors[2][i][j]);
 			}
 		}
+		//Set Back colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[Math.abs(j-2)][2][i].setColorOfDir('B', colors[3][i][j]);
 			}
 		}
+		//Set Right colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[2][j][i].setColorOfDir('R', colors[4][i][j]);
 				colors[4][i][j] = cubiePos[2][j][i].getColorOfDir('R');
 			}
 		}
+		//Set Down colors
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				cubiePos[j][i][2].setColorOfDir('D', colors[5][i][j]);
