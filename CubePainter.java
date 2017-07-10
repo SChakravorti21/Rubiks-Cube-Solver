@@ -85,6 +85,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 * The phase is updated in updatePhase() to reflect the stage at which the solution is
 	 */
 	private int phase = 0;
+	private String phaseString;
 	//Helps keep track of moves to perform, and allows for painting of moves
 	private int movesIndex = 0;
 
@@ -99,6 +100,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		setVisible(true);
 		mode = TEXT_SCRAMBLE;
 		inSolution = true;
+		phaseString = "Sunflower";
 		colorSelected = 'R';
 		instructions = new String[] {"Red", "Yellow", "White"};
 		sideChosen = 'L';
@@ -108,7 +110,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 		//Initialize all buttons, sliders and text fields
 		initializeComponents();
-
+		resetScramble(inputScramble.getText());
 		//Initialize the frame timer
 		frameTimer = new javax.swing.Timer(CubePainter.DELAY, new ActionListener()
 		{
@@ -318,6 +320,10 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 
 		else if(inSolution) {
+			//Display the phase of a solution
+			g.setFont(new Font("Monospace", Font.BOLD, 25));
+			g.drawString("Phase: " + phaseString, 30, 120);
+			
 			g.setFont(font);
 			g.setColor(Color.RED);
 			g.drawString(movesPerformed, 50, 700); //Draw the moves that have already been performed
@@ -610,19 +616,26 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		if(movesIndex >= movesToPerform.length()) {
 			switch(phase) {
 			case 0: 
-				movesToPerform = whiteCross; break;
+				movesToPerform = whiteCross; 
+				phaseString = "White Cross"; break;
 			case 1: 
-				movesToPerform = whiteCorners; break;
+				movesToPerform = whiteCorners; 
+				phaseString = "White Corners"; break;
 			case 2:
-				movesToPerform = secondLayer; break;
+				movesToPerform = secondLayer; 
+				phaseString = "Second Layer"; break;
 			case 3:
-				movesToPerform = yellowCross; break;
+				movesToPerform = yellowCross;
+				phaseString = "Yellow Cross";break;
 			case 4:
-				movesToPerform = OLL; break;
+				movesToPerform = OLL;
+				phaseString = "OLL";break;
 			case 5:
-				movesToPerform = PLL; break;
+				movesToPerform = PLL;
+				phaseString = "PLL";break;
 			case 6:
-				movesToPerform = " "; phase--;
+				movesToPerform = " ";
+				phaseString = ""; phase--;
 			}
 			phase++; movesIndex = 0;
 		}
