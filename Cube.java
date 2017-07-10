@@ -1,3 +1,6 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Cube {
 
@@ -2709,5 +2712,110 @@ public class Cube {
 		
 	}
 
-
+	public void paintComponent(Graphics g) {
+		//NOTE: the logic following may seem confusing because we need to store the colors as *they will be displayed*.
+		//This means, for example, that the left side of the cube will be rotated 90 degrees clockwise such that
+		//when displayed, it looks as if it is directly "connected" to the yellow (U) face.
+		
+		int xVal = 50;
+		int yVal = 300;
+		int size = CubePainter.CUBIE_SIZE;
+		//Populate left colors, constant x
+		for(int y = 2; y>=0; y--) {
+			for(int z = 2; z>=0; z--) {
+				g.setColor(getColor(cubiePos[0][y][z].getColorOfDir('L')));
+				g.fillRect(xVal + Math.abs(z-2)*size, yVal+ Math.abs(y-2)*size, size, size);
+				//left[Math.abs(y-2)][Math.abs(z-2)] = cubiePos[0][y][z].getColorOfDir('L');
+			}
+		}
+		
+		//Up colors, constant z
+		xVal += size*3;
+		for(int x = 0; x<=2; x++) {
+			for(int y = 2; y>=0; y--) {
+				g.setColor(getColor(cubiePos[x][y][0].getColorOfDir('U')));
+				g.fillRect(xVal + x*size, yVal+ Math.abs(y-2)*size, size, size);
+				//up[Math.abs(y-2)][x] = cubiePos[x][y][0].getColorOfDir('U');
+			}
+		}
+		
+		//Front colors, constant y
+		yVal += size*3;
+		for(int z = 0; z<=2; z++) {
+			for(int x = 0; x<=2; x++) {
+				g.setColor(getColor(cubiePos[x][0][z].getColorOfDir('F')));
+				g.fillRect(xVal + x*size, yVal+ z*size, size, size);
+				//front[z][x] = cubiePos[x][0][z].getColorOfDir('F');
+			}
+		}
+		
+		//Back colors, constant y
+		yVal -= size*6;
+		for(int x = 0; x<=2; x++) {
+			for(int z = 2; z>=0; z--) {
+				g.setColor(getColor(cubiePos[x][2][z].getColorOfDir('B')));
+				g.fillRect(xVal + x*size, yVal+ Math.abs(z-2)*size, size, size);
+				//back[Math.abs(z-2)][x] = cubiePos[x][2][z].getColorOfDir('B');
+			}
+		}
+		
+		//Right colors, constant x
+		xVal += size*3;
+		yVal += size*3;
+		for(int y = 2; y>=0; y--) {
+			for(int z = 0; z<=2; z++) {
+				g.setColor(getColor(cubiePos[2][y][z].getColorOfDir('R')));
+				g.fillRect(xVal + z*size, yVal+ Math.abs(y-2)*size, size, size);
+				//right[Math.abs(y-2)][z] = cubiePos[2][y][z].getColorOfDir('R');
+			}
+		}
+		
+		//Down colors, constant z
+		xVal += size*3;
+		for(int x = 2; x>=0; x--) {
+			for(int y = 2; y>=0; y--) {
+				g.setColor(getColor(cubiePos[x][y][2].getColorOfDir('D')));
+				g.fillRect(xVal + Math.abs(x-2)*size, yVal+ Math.abs(y-2)*size, size, size);
+				//down[Math.abs(y-2)][Math.abs(x-2)] = cubiePos[x][y][2].getColorOfDir('D');
+			}
+		}
+		
+		((Graphics2D)g).setStroke(CubePainter.s);
+		g.setColor(Color.BLACK);
+		for(int k = 0; k<6; k++) {
+			switch(k) {
+			case(0): xVal = 50; yVal = 300; break;
+			case(1): xVal += size*3; 	break;
+			case(2): yVal += size*3; 	break;
+			case(3): yVal -= size*6;	break;
+			case(4): xVal += size*3;
+			yVal += size*3; 	break;
+			case(5): xVal += size*3; 	break;
+			}
+			for(int i = 0; i<3; i++){
+				for(int j = 0; j<3; j++) {
+					g.drawRect(xVal + j*size, yVal+ i*size, size, size);
+				}
+			}
+		}
+	
+	}
+	
+	/**
+	 * Returns the appropriate Color object based on a cubie's color for appropriate
+	 * painting in the paintComponent() method.
+	 * @param color: cubie color
+	 * @return corresponding Color object
+	 */
+	private Color getColor(char color) {
+		switch(color) {
+		case 'W': return Color.WHITE;
+		case 'Y': return Color.YELLOW;
+		case 'B': return Color.BLUE;
+		case 'G': return Color.GREEN;
+		case 'R': return Color.RED;
+		case 'O': return Color.ORANGE;	
+		}
+		return Color.BLACK;	
+	}
 }

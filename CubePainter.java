@@ -40,12 +40,12 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	//Timer to control delay between animation of moves
 	private Timer frameTimer;
 	//Stroke for bold outline along edges of cubie colors
-	private final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
+	public final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
 	private final static Font font = new Font("Monospace", Font.BOLD, 35);
 	//Standard frame rate delay
 	public final static int DELAY = 1500;
-	private final int CUBIE_SIZE = 50;
+	public final static int CUBIE_SIZE = 50;
 
 	//Allows for toggling between modes when updateMode() is invoked
 	private String mode = new String();
@@ -202,7 +202,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		else if(e.getSource() == sideChoser) {
 			sideChosen = ((String)sideChoser.getSelectedItem()).charAt(0);
 			instructions = getInstructions();
-			repaint();
+			//repaint();
 		} else if(e.getSource() == applyScramble) {
 			stop();
 			//While the cube is being scrambled, screen will show nonsensical colors, such as black, so set as invisible
@@ -210,17 +210,17 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 			resetScramble(inputScramble.getText());
 			inSolution = true;
 			updateElements();
-			repaint();
+			//repaint();
 			setVisible(true);
 		} else if(e.getSource() == resetCubeInputs) {
 			resetCubeInputs();
-			repaint();
+			//repaint();
 		} else if(e.getSource() == setInputs) {
 			cube.setAllColors(colorsInputed);
 			resetScrambleByColorInputs();
 			inSolution = true;
 			updateElements();
-			repaint();
+			//repaint();
 		}
 	}
 
@@ -259,11 +259,11 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 * Paints the JPanel. Upon initialization, paints the buttons, sliders, and text field which
 	 * the user can interact with. When repaint() is called, the main changes that will be visible
 	 * are changes to the cube, moves to be performed, and moves already performed. For painting the cube, this method
-	 * invokes the getColors() method from Cube to retrieve all colors, and after painting those colors,
+	 * invokes the paintComponent() method from Cube to retrieve all colors, and after painting those colors,
 	 * paints an outline around the cubies.
 	 */
 	public void paintComponent(Graphics g) {
-		super.repaint();
+		super.paintComponent(g);
 
 		if(mode.equals(TEXT_SCRAMBLE)) {
 			g.setFont(new Font("Monospace", Font.BOLD, 25));
@@ -339,46 +339,10 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 				}
 			}
 
-			//Draw the cube itself now
+			//Paint the cube itself now
 			((Graphics2D)g).setStroke(s);
-			char[][][] allSets = cube.getColors();
-			int xVal = 50;
-			int yVal = 300;
-			for(int k = 0; k<6; k++) {
-				switch(k) {
-				case(1): xVal += CUBIE_SIZE*3;; 	break;
-				case(2): yVal += CUBIE_SIZE*3; 	break;
-				case(3): yVal -= CUBIE_SIZE*6;	break;
-				case(4): xVal += CUBIE_SIZE*3;
-				yVal += CUBIE_SIZE*3; 	break;
-				case(5): xVal += CUBIE_SIZE*3; 	break;
-				}
-				for(int i = 0; i<3; i++){
-					for(int j = 0; j<3; j++) {
-						g.setColor(getColor(allSets[k][i][j]));
-						g.fillRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-					}
-				}
-			}
-
-			//Draw the outline
-			for(int k = 0; k<6; k++) {
-				switch(k) {
-				case(0): xVal = 50; yVal = 300; break;
-				case(1): xVal += CUBIE_SIZE*3;; 	break;
-				case(2): yVal += CUBIE_SIZE*3; 	break;
-				case(3): yVal -= CUBIE_SIZE*6;	break;
-				case(4): xVal += CUBIE_SIZE*3;
-				yVal += CUBIE_SIZE*3; 	break;
-				case(5): xVal += CUBIE_SIZE*3; 	break;
-				}
-				for(int i = 0; i<3; i++){
-					for(int j = 0; j<3; j++) {
-						g.setColor(Color.BLACK);
-						g.drawRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-					}
-				}
-			}
+			cube.paintComponent(g);
+			
 		}
 
 	}
@@ -635,7 +599,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 				phaseString = "PLL";break;
 			case 6:
 				movesToPerform = " ";
-				phaseString = ""; phase--;
+				phaseString = "Solved"; phase--;
 			}
 			phase++; movesIndex = 0;
 		}
