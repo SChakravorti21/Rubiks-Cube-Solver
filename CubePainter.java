@@ -202,7 +202,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		else if(e.getSource() == sideChoser) {
 			sideChosen = ((String)sideChoser.getSelectedItem()).charAt(0);
 			instructions = getInstructions();
-			//repaint();
+			repaint();
 		} else if(e.getSource() == applyScramble) {
 			stop();
 			//While the cube is being scrambled, screen will show nonsensical colors, such as black, so set as invisible
@@ -210,17 +210,16 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 			resetScramble(inputScramble.getText());
 			inSolution = true;
 			updateElements();
-			//repaint();
 			setVisible(true);
 		} else if(e.getSource() == resetCubeInputs) {
 			resetCubeInputs();
-			//repaint();
+			repaint();
 		} else if(e.getSource() == setInputs) {
 			cube.setAllColors(colorsInputed);
 			resetScrambleByColorInputs();
 			inSolution = true;
 			updateElements();
-			//repaint();
+			repaint();
 		}
 	}
 
@@ -557,9 +556,12 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 * @param str
 	 */
 	public void updateMode(String str) {
-		mode = new String(str);
-		updateElements();
-		repaint();
+		if(!str.equals(mode)) {
+			mode = new String(str);
+			phaseString = "Sunflower";
+			updateElements();
+			repaint();
+		}
 	}
 
 	/**
