@@ -2,8 +2,8 @@
 public class Cube {
 
 	//Stores the state of the cube as an object of 26 cubies
-	private static Cubie[][][] cubiePos = new Cubie[3][3][3];
-
+	private Cubie[][][] cubiePos = new Cubie[3][3][3];
+	
 	/**
 	 * Constructs the Cube object by instantiating a Cubie for each position in three-dimensional space
 	 * When the cube is held with Yellow facing up and Green facing front, x increases going from left to right,
@@ -2658,54 +2658,40 @@ public class Cube {
 		}
 	}
 
-	public char[][] getColorsOfSide(char side) {
-		char[][] colors = new char[3][3];
-		switch(side) {
-		case('L') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[0][Math.abs(j-2)][i].getColorOfDir('L');
-				}
+	public void setAllColors(char[][][] colors) {
+		
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[0][Math.abs(j-2)][i].setColorOfDir('L', colors[0][i][j]);
 			}
-			break;
-		case('U') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[j][Math.abs(i-2)][0].getColorOfDir('U');
-				}
+		}
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[j][Math.abs(i-2)][0].setColorOfDir('U', colors[1][i][j]);
 			}
-			break;
-		case('F') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[j][0][i].getColorOfDir('F');
-				}
+		}
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[j][0][i].setColorOfDir('F', colors[2][i][j]);
 			}
-			break;
-		case('B') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[Math.abs(j-2)][2][i].getColorOfDir('B');
-				}
+		}
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[Math.abs(j-2)][2][i].setColorOfDir('B', colors[3][i][j]);
 			}
-			break;
-		case('R') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[2][j][i].getColorOfDir('R');
-				}
+		}
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[2][j][i].setColorOfDir('R', colors[4][i][j]);
+				colors[4][i][j] = cubiePos[2][j][i].getColorOfDir('R');
 			}
-			break;
-		case('D') :
-			for(int i = 0; i<3; i++) {
-				for(int j = 0; j<3; j++) {
-					colors[i][j] = cubiePos[j][i][2].getColorOfDir('D');
-				}
+		}
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				cubiePos[j][i][2].setColorOfDir('D', colors[5][i][j]);
 			}
-			break;
 		}
 		
-		return colors;
 	}
 
 

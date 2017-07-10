@@ -3,6 +3,7 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import javax.swing.*;
 import javax.swing.event.*;
+import java.util.Arrays;
 
 public class CubeDisplayer extends JFrame implements ActionListener{
 	//Auto-generated ID
@@ -30,9 +31,7 @@ public class CubeDisplayer extends JFrame implements ActionListener{
 	public CubeDisplayer() {
 		setTitle("Cube Displayer");
 		setLayout(new BorderLayout());
-		setSize(700, 770);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		setVisible(true);
 		setResizable(false);
 
 		menuBar = new JMenuBar();
@@ -49,17 +48,8 @@ public class CubeDisplayer extends JFrame implements ActionListener{
 		add(cubePainter);
 		cubePainter.updateElements();
 		cubePainter.repaint();
-
-		//Initialize the frame timer
-		//NOTE: For whatever reason, initializing the frame timer within the CubePainter constructor does not seem to work
-		cubePainter.frameTimer = new javax.swing.Timer(CubePainter.DELAY, new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				cubePainter.performNextMove();
-				cubePainter.repaint(); //Only repaint the JPanel, not the JFrame (to preserve all interactive features)
-			}
-		});	
+		pack();
+		setVisible(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -78,13 +68,15 @@ public class CubeDisplayer extends JFrame implements ActionListener{
 	}
 }
 
-class CubePainter extends JPanel implements ActionListener, ChangeListener, MouseListener{
+class CubePainter extends JPanel implements ActionListener, ChangeListener {
 	//Auto-generated ID
 	private static final long serialVersionUID = -8879300942801280752L;
 
 	//Buttons to start and stop animation; to reset the scramble based on text field
 	private JButton start, stop, applyScramble;
+	private JButton resetCubeInputs, setInputs;
 	private JButton[] colorInputs;
+	private CubeButton[][] cubeInputs;
 	//Slider to control animation speed
 	private JSlider animSpeed;
 	//Text field to allow user to input a custom scramble different from the default scramble
@@ -107,6 +99,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 	public final static String COLOR_SELECTION = "Color Selection";
 	private char colorSelected;
 	private char sideChosen;
+	private char[][][] colorsInputted;
 	//Whether a solution is currently being displayed
 	private boolean inSolution;
 
@@ -132,7 +125,6 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 	private int phase = 0;
 	//Helps keep track of moves to perform, and allows for painting of moves
 	private int movesIndex = 0;
-	private final Robot robot;
 
 	/**
 	 * Initializes all elements of the CubePainter JPanel with which the user can interact.
@@ -142,20 +134,36 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		setLayout(null); //Allows for manually setting locations of components
 		setSize(getPreferredSize());
 		setVisible(true);
-		inSolution = true;
+		inSolution = false;
 		mode = TEXT_SCRAMBLE;
 		colorSelected = 'R';
 		sideChosen = 'L';
-		
-		try {
-			robot = new Robot();
-		}
-		catch (AWTException e) {
-			throw new RuntimeException(e);
-		}
+		colorsInputted = new char[6][3][3];
+		resetCubeInputs();
 
 		//Initialize all buttons, sliders and text fields
 		initializeComponents();
+		
+		//Initialize the frame timer
+		frameTimer = new javax.swing.Timer(CubePainter.DELAY, new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(getInSolution())
+					performNextMove();
+			}
+		});	
+	}
+	
+	public void resetCubeInputs() {
+		for(int i = 0; i<3; i++) {
+			Arrays.fill(colorsInputted[0][i], 'R');
+			Arrays.fill(colorsInputted[1][i], 'Y');
+			Arrays.fill(colorsInputted[2][i], 'G');
+			Arrays.fill(colorsInputted[3][i], 'B');
+			Arrays.fill(colorsInputted[4][i], 'O');
+			Arrays.fill(colorsInputted[5][i], 'W');
+		}
 	}
 
 	public void initializeComponents() {
@@ -189,10 +197,22 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		applyScramble.addActionListener(this); 
 		
 		sideChoser = new JComboBox<String>(new String[]{"Left", "Up", "Back", "Front", "Right", "Down"} );
-		sideChoser.setLocation(270, 100); sideChoser.setSize(100, 30);
+		sideChoser.setLocation(270, 50); sideChoser.setSize(100, 30);
 		add(sideChoser);
 		sideChoser.addActionListener(this);
 		sideChoser.setVisible(false); sideChoser.setEnabled(false);
+		
+		resetCubeInputs = new JButton("RESET");
+		resetCubeInputs.setLocation(200, 650); resetCubeInputs.setSize(100, 30);
+		add(resetCubeInputs);
+		resetCubeInputs.addActionListener(this);
+		resetCubeInputs.setVisible(false); resetCubeInputs.setEnabled(false);
+		
+		setInputs = new JButton("PROCEED");
+		setInputs.setLocation(300, 650); setInputs.setSize(100, 30);
+		add(setInputs);
+		setInputs.addActionListener(this);
+		setInputs.setVisible(false); setInputs.setEnabled(false);
 		
 		colorInputs = new JButton[6];
 		for(int i = 0; i<6; i++) {
@@ -211,6 +231,19 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 			colorInputs[i].addActionListener(this);
 			add(colorInputs[i]);
 		}
+		
+		cubeInputs = new CubeButton[3][3];
+		for(int i = 0; i<3; i++) {
+			for(int j = 0 ; j<3; j++) {
+				cubeInputs[i][j] = new CubeButton(i, j);
+				cubeInputs[i][j].addActionListener(this);
+				cubeInputs[i][j].setLocation(250 +j*CUBIE_SIZE, 200 + i*CUBIE_SIZE);
+				cubeInputs[i][j].setSize(CUBIE_SIZE, CUBIE_SIZE);
+				cubeInputs[i][j].setEnabled(false); cubeInputs[i][j].setVisible(false);
+				add(cubeInputs[i][j]);
+			}
+		}
+		
 	}
 	/**
 	 * Takes actions performed on the buttons to cause changes in the animations or resetting the cube
@@ -228,15 +261,24 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 			inSolution = true;
 			updateElements();
 			setVisible(true);
-		}
-		else if(e.getSource() == sideChoser) {
+		} else if(e.getSource() == sideChoser) {
 			sideChosen = ((String)sideChoser.getSelectedItem()).charAt(0);
-			repaint(250, 200, CUBIE_SIZE*3, CUBIE_SIZE*3);
-		}
-		else {
+		} else if(e.getSource() == resetCubeInputs) {
+			resetCubeInputs();
+		} else if(e.getSource() == setInputs) {
+			cube.setAllColors(colorsInputted);
+			resetScrambleByColorInputs();
+			inSolution = true;
+			updateElements();
+		} else {
 			JButton colorInput = (JButton)e.getSource();
-			colorSelected = colorInput.getName().charAt(0);
-			repaint(400, 465 + CUBIE_SIZE*2, CUBIE_SIZE, CUBIE_SIZE);
+			if(colorInput.getY() > 440) {
+				colorSelected = colorInput.getName().charAt(0);
+			}
+			else {
+				CubeButton colorInp = (CubeButton)e.getSource();
+				colorsInputted[getIndexOfSide(sideChosen)][colorInp.getI()][colorInp.getJ()] = colorSelected;
+			}
 		}
 	}
 
@@ -279,7 +321,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 	 * paints an outline around the cubies.
 	 */
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+		super.repaint();
 
 		if(mode.equals(TEXT_SCRAMBLE)) {
 			g.setFont(new Font("Monospace", Font.BOLD, 25));
@@ -308,7 +350,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 				
 				//Paint the chosen cube side
 				xVal = 250; yVal = 200;
-				char[][] sideColors = cube.getColorsOfSide(sideChosen);
+				char[][] sideColors = colorsInputted[getIndexOfSide(sideChosen)];
 				for(int i = 0; i<3; i++){
 					for(int j = 0; j<3; j++) {
 						g.setColor(getColor(sideColors[i][j]));
@@ -317,6 +359,14 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 						g.drawRect(xVal + j*CUBIE_SIZE, yVal+ i*CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
 					}
 				}
+				
+				g.setColor(Color.BLACK);
+				String[] instr = getInstructions();
+				g.drawString("Hold the cube such that " + instr[0] + " is facing up, " +
+						instr[1] + " is to the back, and " + instr[2] + " is in front.",
+						50, 130);
+				g.drawString("Enter the top colors.",
+						50, 150);
 				
 				//Paint the color that is selected so user is sure to paint correct color
 				g.setFont(font);
@@ -406,6 +456,43 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		return Color.BLACK;	
 	}
 
+	private int getIndexOfSide(char side) {
+		switch(side) {
+			case('L'): return 0;
+			case('U'): return 1;
+			case('F'): return 2;
+			case('B'): return 3;
+			case('R'): return 4;
+			case('D'): return 5;
+		}
+		return 6;
+	}
+	
+	private String[] getInstructions() {
+		String[] colors = new String[3];
+		switch(sideChosen) {
+		case('L'): 	colors[0] = "Red";
+				   	colors[1] = "Yellow";
+				   	colors[2] = "White"; break;
+		case('U'): 	colors[0] = "Yellow";
+		   		   	colors[1] = "Blue";
+		   		   	colors[2] = "Green"; break;
+		case('F'): 	colors[0] = "Green";
+		   		   	colors[1] = "Yellow";
+		   		   	colors[2] = "White"; break;
+		case('B'): 	colors[0] = "Blue";
+		           	colors[1] = "Yellow";
+		           	colors[2] = "White"; break;
+		case('R'): 	colors[0] = "Orange";
+		   		   	colors[1] = "Yellow";
+		   		   	colors[2] = "White"; break;
+		case('D'): 	colors[0] = "White";
+		    		   	colors[1] = "Green";
+		    		   	colors[2] = "Blue";
+		}
+		return colors;
+	}
+	
 	/**
 	 * Resets the scramble that is to be applied on the cube based on the input.
 	 * Determines the moves to be performed to solve the cube as well.
@@ -428,8 +515,26 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 
 		cube = new Cube();
 		cube.scramble(scramble);
-		//If the cube is being scrambled newly after intiliazing is complete and animation has begun,
+		//If the cube is being scrambled newly after initializing is complete and animation has begun,
 		//be sure to reset all reference indexes
+		movesIndex = 0; phase = 0;
+		repaint();
+	}
+	
+	public void resetScrambleByColorInputs() {
+		Cube cube2 = new Cube();
+		cube2.setAllColors(colorsInputted);
+		sunflower = cube2.makeSunflower();
+		whiteCross = cube2.makeWhiteCross();
+		whiteCorners = cube2.finishWhiteLayer();
+		secondLayer = cube2.insertAllEdges();
+		yellowCross = cube2.makeYellowCross();
+		OLL = cube2.orientLastLayer();
+		PLL = cube2.permuteLastLayer();
+
+		movesToPerform = sunflower;
+		movesPerformed = new String();
+		
 		movesIndex = 0; phase = 0;
 		repaint();
 	}
@@ -487,6 +592,7 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 		}
 	}
 
+	
 	public void updateElements() {
 		if(mode.equals(TEXT_SCRAMBLE)) {
 			if(inSolution) {
@@ -501,8 +607,15 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 			applyScramble.setEnabled(true); 	applyScramble.setVisible(true);
 			inputScramble.setEnabled(true); 	inputScramble.setVisible(true);
 			sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
+			resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
+			setInputs.setVisible(false);		setInputs.setEnabled(false);
 			for(int i = 0; i<6; i++) {
 				colorInputs[i].setEnabled(false);
+			}
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubeInputs[i][j].setEnabled(false);
+				}
 			}
 			
 		} else if(mode.equals(COLOR_SELECTION)) {
@@ -510,17 +623,31 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 				start.setEnabled(true); 			start.setVisible(true);
 				stop.setEnabled(true); 			stop.setVisible(true);
 				animSpeed.setEnabled(true); 		animSpeed.setVisible(true);
-				sideChoser.setVisible(false); sideChoser.setEnabled(false);
+				sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
+				resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
+				setInputs.setVisible(false);		setInputs.setEnabled(false);
 			} else if(!inSolution) {
 				start.setEnabled(false); 		start.setVisible(false);
 				stop.setEnabled(false); 			stop.setVisible(false);
 				animSpeed.setEnabled(false); 	animSpeed.setVisible(false);
 				sideChoser.setVisible(true); 	sideChoser.setEnabled(true);
+				resetCubeInputs.setVisible(true);resetCubeInputs.setEnabled(true);
+				setInputs.setVisible(true);		setInputs.setEnabled(true);
 				for(int i = 0; i<6; i++) {
-					colorInputs[i].setVisible(true); colorInputs[i].setEnabled(true);
+					colorInputs[i].setVisible(true); 
+					colorInputs[i].setEnabled(true);
 					colorInputs[i].setOpaque(false); 
 					colorInputs[i].setContentAreaFilled(false);
 					colorInputs[i].setBorderPainted(false);
+				}
+				for(int i = 0; i<3; i++) {
+					for(int j = 0; j<3; j++) {
+						cubeInputs[i][j].setVisible(true); 
+						cubeInputs[i][j].setEnabled(true);
+						cubeInputs[i][j].setOpaque(false); 
+						cubeInputs[i][j].setContentAreaFilled(false);
+						cubeInputs[i][j].setBorderPainted(false);
+					}
 				}
 			}
 			applyScramble.setEnabled(false);	applyScramble.setVisible(false);
@@ -534,6 +661,10 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 
 	public void setInSolution(boolean inSoln) {
 		inSolution = inSoln;
+	}
+	
+	public boolean getInSolution() {
+		return inSolution;
 	}
 
 	/**
@@ -565,53 +696,6 @@ class CubePainter extends JPanel implements ActionListener, ChangeListener, Mous
 	}
 
 	
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if(mode.equals(COLOR_SELECTION) && !inSolution) {
-			if(e.getX() > 250) {
-				Color color = robot.getPixelColor(e.getX(), e.getY());
-				if(color.equals(Color.RED)) {
-					colorSelected = 'R';
-				} else if(color.equals(Color.ORANGE)) {
-					colorSelected = 'O';
-				} else if(color.equals(Color.GREEN)) {
-					colorSelected = 'G';
-				} else if(color.equals(Color.BLUE)) {
-					colorSelected = 'B';
-				} else if(color.equals(Color.WHITE)) {
-					colorSelected = 'W';
-				} else if(color.equals(Color.YELLOW)) {
-					colorSelected = 'Y';
-				}
-				System.out.println("" + colorSelected);
-			}
-			
-		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }
 
 class CubeMenu extends JMenu {
@@ -627,5 +711,27 @@ class CubeMenu extends JMenu {
 	public JMenuItem add(JMenuItem item) {
 		item.addActionListener(actionListener);
 		return super.add(item);
+	}
+}
+
+class CubeButton extends JButton {
+	//Auto-generated ID
+	private static final long serialVersionUID = 88125897501752956L;
+	
+	int i;
+	int j;
+	
+	public CubeButton(int newI, int newJ) {
+		super();
+		i = newI;
+		j = newJ;
+	}
+	
+	public int getI() {
+		return i;
+	}
+	
+	public int getJ() {
+		return j;
 	}
 }
