@@ -1,6 +1,11 @@
 # cube-solver
 Java program to find a solution to a given scramble for a Rubik's Cube
 
+# v2.0
+Incorporated a "Color Selection" mode into GUI. The user is now able to easily input the colors of a valid scrambled cube in the orthodox color scheme. This will allow the user to generate a complete solution and step through it in the same manner as the "Text Scramble" mode. (The Text Scramble mode is still fully functional and usable).
+
+The user will also be told which phase the solution is in (white cross, first layer, second layer, etc.).
+
 # v1.2
 Incorporated interactive elements into GUI.
 
