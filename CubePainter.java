@@ -1,19 +1,27 @@
+
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -27,6 +35,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 	//Buttons to start and stop animation; to reset the scramble based on text field
 	private JButton start, stop, applyScramble;
+	private JButton skip, rewind;
 	//Buttons used during the color input phase to either reset the colors or proceed with the inputed colors
 	//to the solution
 	private JButton resetCubeInputs, setInputs;
@@ -40,12 +49,12 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	//Timer to control delay between animation of moves
 	private Timer frameTimer;
 	//Stroke for bold outline along edges of cubie colors
-	public final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
+	final static BasicStroke s = new BasicStroke(5.0f, BasicStroke.CAP_BUTT, 
 			BasicStroke.JOIN_MITER, 10.0f);
 	private final static Font font = new Font("Monospace", Font.BOLD, 35);
 	//Standard frame rate delay
 	public final static int DELAY = 1500;
-	public final static int CUBIE_SIZE = 50;
+	final static int CUBIE_SIZE = 50;
 
 	//Allows for toggling between modes when updateMode() is invoked
 	private String mode = new String();
@@ -96,7 +105,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	public CubePainter() {
 		setLayout(null); //Allows for manually setting locations of components
 		setSize(getPreferredSize());
-		setIgnoreRepaint(true); //Otherwise this program will eat up all of your memory
+		setIgnoreRepaint(true);
 		setVisible(true);
 		mode = TEXT_SCRAMBLE;
 		inSolution = true;
@@ -153,6 +162,35 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		add(stop);
 		stop.addActionListener(this);
 
+		ImageIcon icon1 = new ImageIcon(), icon2 = new ImageIcon();
+		try {
+			Image img1 = ImageIO.read(getClass().getResource("Skip.png"));
+			Image img2 = ImageIO.read(getClass().getResource("Rewind.png"));
+			img1 = img1.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+			img2 = img2.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+			icon1 = new ImageIcon(img1);
+			icon2 = new ImageIcon(img2);
+		  } catch (Exception ex) {
+		    System.out.println(ex);
+		  }
+		
+		skip = new JButton(icon1);
+		skip.setLocation(240, 8);
+		skip.setSize(icon1.getIconWidth(), icon1.getIconHeight());
+		skip.setBackground(this.getBackground());
+		skip.setBorder(null);
+		skip.addActionListener(this);
+		add(skip);
+		
+		rewind = new JButton(icon2);
+		rewind.setLocation(210, 8);
+		rewind.setSize(icon2.getIconWidth(), icon2.getIconHeight());
+		rewind.setBackground(this.getBackground());
+		rewind.setBorder(null);
+		rewind.addActionListener(this);
+		add(rewind);
+		
+
 		animSpeed = new JSlider(1, 10); animSpeed.setValue(1); //Slider values range from 1 to 10
 		animSpeed.setMinorTickSpacing(1); animSpeed.setPaintTicks(true);
 		animSpeed.setSnapToTicks(true);
@@ -190,36 +228,63 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		setInputs.addActionListener(this);
 		setInputs.setVisible(false); setInputs.setEnabled(false);
 	}
-	
+
 	/**
 	 * Takes actions performed on the buttons to cause changes in the animations or resetting the cube.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == start) 
-			start();
-		else if(e.getSource() == stop)
-			stop();
-		else if(e.getSource() == sideChoser) {
+		if (e.getSource() == start) {
+			frameTimer.start();
+		} else if(e.getSource() == stop) {
+			frameTimer.stop();
+		} else if(e.getSource() == skip) {
+			performNextMove();
+			repaint();
+		} else if(e.getSource() == rewind) {
+			boolean flag = false;
+			int prevIndex = movesIndex;
+			while(movesIndex > 1 && !flag) {
+				movesIndex--;
+				if(movesToPerform.substring(movesIndex - 1, movesIndex).equals(" ")) {
+					flag = !flag;
+				}
+				System.out.println(movesIndex);
+			}
+			if(movesIndex == 1) {
+				movesIndex = 0;
+			}
+			movesPerformed = movesToPerform.substring(0, movesIndex);
+			if(movesPerformed.length() >= 35) {
+				movesPerformed = movesPerformed.substring(movesPerformed.length()-33);
+			}
+			cube.reverseMoves(movesToPerform.substring(movesIndex, prevIndex));
+			repaint();
+		} else if(e.getSource() == sideChoser) {
 			sideChosen = ((String)sideChoser.getSelectedItem()).charAt(0);
 			instructions = getInstructions();
 			repaint();
 		} else if(e.getSource() == applyScramble) {
-			stop();
+			frameTimer.stop();
 			//While the cube is being scrambled, screen will show nonsensical colors, such as black, so set as invisible
 			setVisible(false); 
 			resetScramble(inputScramble.getText());
 			inSolution = true;
 			updateElements();
+			repaint();
 			setVisible(true);
 		} else if(e.getSource() == resetCubeInputs) {
 			resetCubeInputs();
 			repaint();
 		} else if(e.getSource() == setInputs) {
+			frameTimer.stop();
+			//While the cube is being scrambled, screen will show nonsensical colors, such as black, so set as invisible
+			setVisible(false);
 			cube.setAllColors(colorsInputed);
 			resetScrambleByColorInputs();
 			inSolution = true;
 			updateElements();
 			repaint();
+			setVisible(true);
 		}
 	}
 
@@ -233,20 +298,6 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	}
 
 	/**
-	 * Starts the frame timer.
-	 */
-	public void start() {
-		frameTimer.start();
-	}
-
-	/**
-	 * Stops the frame timer.
-	 */
-	public void stop() {
-		frameTimer.stop();
-	}
-
-	/**
 	 * Returns the preferred dimensions of the CubePainter as a Dimension object.
 	 * @return default dimensions of CubePainter
 	 */
@@ -254,6 +305,13 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		return new Dimension(700,770);
 	}
 
+	/**
+	 * Paints the JPanel. Upon initialization, paints the buttons, sliders, and text field which
+	 * the user can interact with. When repaint() is called, the main changes that will be visible
+	 * are changes to the cube, moves to be performed, and moves already performed. For painting the cube, this method
+	 * invokes the getColors() method from Cube to retrieve all colors, and after painting those colors,
+	 * paints an outline around the cubies.
+	 */
 	/**
 	 * Paints the JPanel. Upon initialization, paints the buttons, sliders, and text field which
 	 * the user can interact with. When repaint() is called, the main changes that will be visible
@@ -518,16 +576,16 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 */
 	public void updateElements() {
 		if(mode.equals(TEXT_SCRAMBLE)) {
-				start.setEnabled(true); 			start.setVisible(true);
-				stop.setEnabled(true); 			stop.setVisible(true);
-				animSpeed.setEnabled(true); 		animSpeed.setVisible(true);
-				inputScramble.setEnabled(true); 	inputScramble.setVisible(true);
-				applyScramble.setEnabled(true); 	applyScramble.setVisible(true);
-				
-				//Disable all components specific to color selection mode
-				sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
-				resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
-				setInputs.setVisible(false);		setInputs.setEnabled(false);
+			start.setEnabled(true); 			start.setVisible(true);
+			stop.setEnabled(true); 			stop.setVisible(true);
+			animSpeed.setEnabled(true); 		animSpeed.setVisible(true);
+			inputScramble.setEnabled(true); 	inputScramble.setVisible(true);
+			applyScramble.setEnabled(true); 	applyScramble.setVisible(true);
+
+			//Disable all components specific to color selection mode
+			sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
+			resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
+			setInputs.setVisible(false);		setInputs.setEnabled(false);
 		}
 		else if(mode.equals(COLOR_SELECTION)) {
 			if(inSolution) {
@@ -556,12 +614,9 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 * @param str
 	 */
 	public void updateMode(String str) {
-		if(!str.equals(mode)) {
-			mode = new String(str);
-			phaseString = "Sunflower";
-			updateElements();
-			repaint();
-		}
+		mode = new String(str);
+		updateElements();
+		repaint();
 	}
 
 	/**
@@ -620,26 +675,28 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if(e.getY() > 200 && e.getY() < 200+CUBIE_SIZE*3) {
-			int i = (e.getY() - 200)/CUBIE_SIZE;
-			int j = (e.getX() - 250)/CUBIE_SIZE;
-			colorsInputed[getIndexOfSide(sideChosen)][i][j] = colorSelected;
-			repaint();
-		} else if(e.getY() > 450 && e.getY() < 450+CUBIE_SIZE) {
-			BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2 = image.createGraphics();
-			this.paint(g2);
-			int color = image.getRGB(e.getX(), e.getY());
-			g2.dispose();
-			switch(color) {
-			case(-65536): 		colorSelected = 'R'; break; //Red
-			case(-16711936): 	colorSelected = 'G'; break; //Green
-			case(-16776961): 	colorSelected = 'B'; break; //Blue
-			case(-256): 			colorSelected = 'Y'; break; //Yellow
-			case(-14336): 		colorSelected = 'O'; break; //Orange
-			case(-1): 			colorSelected = 'W'; break; //White
+		if(mode.equals(COLOR_SELECTION) && !inSolution) {
+			if(e.getY() > 200 && e.getY() < 200+CUBIE_SIZE*3) {
+				int i = (e.getY() - 200)/CUBIE_SIZE;
+				int j = (e.getX() - 250)/CUBIE_SIZE;
+				colorsInputed[getIndexOfSide(sideChosen)][i][j] = colorSelected;
+				repaint();
+			} else if(e.getY() > 450 && e.getY() < 450+CUBIE_SIZE) {
+				BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+				Graphics2D g2 = image.createGraphics();
+				this.paint(g2);
+				int color = image.getRGB(e.getX(), e.getY());
+				g2.dispose();
+				switch(color) {
+				case(-65536): 		colorSelected = 'R'; break; //Red
+				case(-16711936): 	colorSelected = 'G'; break; //Green
+				case(-16776961): 	colorSelected = 'B'; break; //Blue
+				case(-256): 			colorSelected = 'Y'; break; //Yellow
+				case(-14336): 		colorSelected = 'O'; break; //Orange
+				case(-1): 			colorSelected = 'W'; break; //White
+				}
+				repaint();
 			}
-			repaint();
 		}
 	}
 
