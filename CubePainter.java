@@ -693,6 +693,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 			case 6:
 				movesToPerform = " ";
 				phaseString = "Solved"; phase--;
+				frameTimer.stop();
 			}
 			phase++; movesIndex = 0;
 		}
