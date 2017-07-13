@@ -34,7 +34,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	private static final long serialVersionUID = -8879300942801280752L;
 
 	//Buttons to start and stop animation; to reset the scramble based on text field
-	private JButton start, stop, applyScramble;
+	private JButton start, stop, applyScramble, randomize;
 	private JButton skip, rewind;
 	//Buttons used during the color input phase to either reset the colors or proceed with the inputed colors
 	//to the solution
@@ -76,7 +76,8 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 	private Cube cube = new Cube();
 	//Default scramble
-	private String scramble = new String("F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' "),
+	private final String DEFAULT_SCRAMBLE = "F2 D' B U' D L2 B2 R B L' B2 L2 B2 D' R2 F2 D' R2 U' ";
+	private String scramble = new String(DEFAULT_SCRAMBLE),
 			sunflower = new String(), whiteCross = new String(),
 			whiteCorners = new String(), secondLayer = new String(), 
 			yellowCross = new String(), OLL = new String(), PLL = new String();
@@ -189,8 +190,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		rewind.setBorder(null);
 		rewind.addActionListener(this);
 		add(rewind);
-		
-
+	
 		animSpeed = new JSlider(1, 10); animSpeed.setValue(1); //Slider values range from 1 to 10
 		animSpeed.setMinorTickSpacing(1); animSpeed.setPaintTicks(true);
 		animSpeed.setSnapToTicks(true);
@@ -205,10 +205,15 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		inputScramble.setFont(new Font("Monospace", Font.BOLD, 15));
 		add(inputScramble);
 
-		applyScramble = new JButton("RESET");
-		applyScramble.setLocation(590, 50); applyScramble.setSize(100,20);
+		applyScramble = new JButton("APPLY");
+		applyScramble.setLocation(590, 40); applyScramble.setSize(100,20);
 		add(applyScramble);
 		applyScramble.addActionListener(this);
+		
+		randomize = new JButton("RANDOM");
+		randomize.setLocation(590, 70); randomize.setSize(100,20);
+		add(randomize);
+		randomize.addActionListener(this);
 
 		sideChoser = new JComboBox<String>(new String[]{"Left", "Up", "Back", "Front", "Right", "Down"} );
 		sideChoser.setLocation(270, 50); sideChoser.setSize(100, 30);
@@ -266,6 +271,16 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		} else if(e.getSource() == applyScramble) {
 			frameTimer.stop();
 			//While the cube is being scrambled, screen will show nonsensical colors, such as black, so set as invisible
+			setVisible(false); 
+			resetScramble(inputScramble.getText());
+			inSolution = true;
+			updateElements();
+			repaint();
+			setVisible(true);
+		} else if(e.getSource() == randomize) { 
+			cube = new Cube();
+			inputScramble.setText(cube.randScramble());
+			scramble = inputScramble.getText();
 			setVisible(false); 
 			resetScramble(inputScramble.getText());
 			inSolution = true;
@@ -496,6 +511,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		//If the cube is being scrambled newly after initializing is complete and animation has begun,
 		//be sure to reset all reference indexes
 		movesIndex = 0; phase = 0;
+		phaseString = "Sunflower";
 		repaint();
 	}
 
@@ -518,6 +534,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 		movesPerformed = new String();
 
 		movesIndex = 0; phase = 0;
+		phaseString = "Sunflower";
 		cube.setAllColors(colorsInputed); //Reset the cube to scrambled state
 		repaint();
 	}
@@ -581,7 +598,10 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 			animSpeed.setEnabled(true); 		animSpeed.setVisible(true);
 			inputScramble.setEnabled(true); 	inputScramble.setVisible(true);
 			applyScramble.setEnabled(true); 	applyScramble.setVisible(true);
-
+			skip.setEnabled(true); 			skip.setVisible(true);
+			rewind.setEnabled(true); 		rewind.setVisible(true);
+			randomize.setEnabled(true); 		randomize.setVisible(true); 
+			
 			//Disable all components specific to color selection mode
 			sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
 			resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
@@ -592,6 +612,10 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 				start.setEnabled(true); 			start.setVisible(true);
 				stop.setEnabled(true); 			stop.setVisible(true);
 				animSpeed.setEnabled(true); 		animSpeed.setVisible(true);
+				skip.setEnabled(true); 			skip.setVisible(true);
+				rewind.setEnabled(true); 		rewind.setVisible(true);
+				
+				randomize.setEnabled(false); 	randomize.setVisible(false);
 				sideChoser.setVisible(false); 	sideChoser.setEnabled(false);
 				resetCubeInputs.setVisible(false);resetCubeInputs.setEnabled(false);
 				setInputs.setVisible(false);		setInputs.setEnabled(false);
@@ -599,6 +623,10 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 				start.setEnabled(false); 		start.setVisible(false);
 				stop.setEnabled(false); 			stop.setVisible(false);
 				animSpeed.setEnabled(false); 	animSpeed.setVisible(false);
+				randomize.setEnabled(false); 	randomize.setVisible(false);
+				
+				skip.setEnabled(false); 			skip.setVisible(false);
+				rewind.setEnabled(false); 		rewind.setVisible(false);
 				sideChoser.setVisible(true); 	sideChoser.setEnabled(true);
 				resetCubeInputs.setVisible(true);resetCubeInputs.setEnabled(true);
 				setInputs.setVisible(true);		setInputs.setEnabled(true);
@@ -614,9 +642,17 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	 * @param str
 	 */
 	public void updateMode(String str) {
-		mode = new String(str);
-		updateElements();
-		repaint();
+		if(!mode.equals(str)) {
+			mode = new String(str);
+			cube = new Cube();
+			if(mode.equals(TEXT_SCRAMBLE)) {
+				scramble = DEFAULT_SCRAMBLE;
+				resetScramble(scramble);
+				inSolution = true;
+			}
+			updateElements();
+			repaint();
+		}
 	}
 
 	/**

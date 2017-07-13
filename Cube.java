@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
 public class Cube {
 
@@ -97,1715 +98,345 @@ public class Cube {
 	 * @param turn
 	 */
 	public void turn (String turn) {
-		//Since we are essentially rotating a matrix, we need to save the first cubie that will be replaced
-		//(Take a look at the first case as an example).
-		Cubie tempCubie;
-		//We will retrieve the colors of each cubie, change the direction of certain colors as necessary,
-		//and pass the new set of colors back to the cubie since turning a face changes the directions of many colors.
-		CubieColor[] tempColors;
-
+		char[] preChange;
+		char[] postChange;
+		Cubie[][] matrix = new Cubie[3][3];
+		
 		switch(turn) {
-
 		case "B":
-			//Save BUL for later
-			tempCubie = cubiePos[0][2][0];
-
-			//Move BRU to BUL
-			cubiePos[0][2][0] = cubiePos[2][2][0];
-			tempColors = cubiePos[0][2][0].getColors();
+			preChange = new char[] {'B', 'U', 'R', 'D', 'L'};
+			postChange = new char[] {'B', 'L', 'U', 'R', 'D'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[Math.abs(j-2)][2][i];
 				}
 			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move BRD to BUR
-			cubiePos[2][2][0] = cubiePos[2][2][2];
-			tempColors = cubiePos[2][2][0].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					cubiePos[Math.abs(j-2)][2][i] = matrix[i][j];
 				}
 			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			//Move BLD to BDR
-			cubiePos[2][2][2] = cubiePos[0][2][2];
-			tempColors = cubiePos[2][2][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			//Move BUL to BLD
-			cubiePos[0][2][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			//Save BD for later
-			tempCubie = cubiePos[1][2][2];
-
-			//Move BL to BD
-			cubiePos[1][2][2] = cubiePos[0][2][1];
-			tempColors = cubiePos[1][2][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			//Move BU to BL
-			cubiePos[0][2][1] = cubiePos[1][2][0];
-			tempColors = cubiePos[0][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
-
-			//Move BR to BU
-			cubiePos[1][2][0] = cubiePos[2][2][1];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move BD to BR
-			cubiePos[2][2][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][1].setColors(tempColors);
 			break;
-
-
+		
 		case "B'":
-			//Save ULB for later
-			tempCubie = cubiePos[0][2][0];
-
-			//Move BLD to BUL
-			cubiePos[0][2][0] = cubiePos[0][2][2];
-			tempColors = cubiePos[0][2][0].getColors();
+			preChange = new char[] {'B', 'U', 'R', 'D', 'L'};
+			postChange = new char[] {'B', 'R', 'D', 'L', 'U'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[Math.abs(j-2)][2][i];
 				}
 			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move BRD to BDL
-			cubiePos[0][2][2] = cubiePos[2][2][2];
-			tempColors = cubiePos[0][2][2].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					cubiePos[Math.abs(j-2)][2][i] = matrix[i][j];
 				}
 			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			//Move BRU to BDR
-			cubiePos[2][2][2] = cubiePos[2][2][0];
-			tempColors = cubiePos[2][2][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			//Move BUL to BRU
-			cubiePos[2][2][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			//Save BD for later
-			tempCubie = cubiePos[1][2][2];
-
-			//Move BR to BD
-			cubiePos[1][2][2] = cubiePos[2][2][1];
-			tempColors = cubiePos[1][2][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			//Move BU to BR
-			cubiePos[2][2][1] = cubiePos[1][2][0];
-			tempColors = cubiePos[2][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][1].setColors(tempColors);
-
-			//Move BL to BU
-			cubiePos[1][2][0] = cubiePos[0][2][1];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move BD to BL
-			cubiePos[0][2][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
 			break;
-
-
-		case "D":
-			tempCubie = cubiePos[2][0][2];
-
-			//Move DLF to DFR
-			cubiePos[2][0][2] = cubiePos[0][0][2];
-			tempColors = cubiePos[2][0][2].getColors();
+			
+		case "D" :
+			preChange = new char[] {'D', 'L', 'B', 'R', 'F'};
+			postChange = new char[] {'D', 'F', 'L', 'B', 'R'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][i][2];
 				}
 			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move DLB to DFL
-			cubiePos[0][0][2] = cubiePos[0][2][2];
-			tempColors = cubiePos[0][0][2].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][i][2] = matrix[i][j];
 				}
 			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			//Move DBR to DLB
-			cubiePos[0][2][2] = cubiePos[2][2][2];
-			tempColors = cubiePos[0][2][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			//Move DFR to DRB
-			cubiePos[2][2][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][2];
-
-			//Move DL to DF
-			cubiePos[1][0][2] = cubiePos[0][1][2];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move DB to DL
-			cubiePos[0][1][2] = cubiePos[1][2][2];
-			tempColors = cubiePos[0][1][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][1][2].setColors(tempColors);
-
-			//Move DR to DB
-			cubiePos[1][2][2] = cubiePos[2][1][2];
-			tempColors = cubiePos[1][2][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			//Move DF to DR
-			cubiePos[2][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
 			break;
-
-
-
-		case "D'":
-			tempCubie = cubiePos[2][0][2];
-
-			//Move DBR to DRF
-			cubiePos[2][0][2] = cubiePos[2][2][2];
-			tempColors = cubiePos[2][0][2].getColors();
+			
+		case "D'" :
+			preChange = new char[] {'D', 'F', 'L', 'B', 'R'};
+			postChange = new char[] {'D', 'L', 'B', 'R', 'F'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][i][2];
 				}
 			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move DLB to DBR
-			cubiePos[2][2][2] = cubiePos[0][2][2];
-			tempColors = cubiePos[2][2][2].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][i][2] = matrix[i][j];
 				}
 			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			//Move DLF to DBL
-			cubiePos[0][2][2] = cubiePos[0][0][2];
-			tempColors = cubiePos[0][2][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			//Move DFR to DLF
-			cubiePos[0][0][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][2];
-
-			//Move DR to DF
-			cubiePos[1][0][2] = cubiePos[2][1][2];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move DB to DR
-			cubiePos[2][1][2] = cubiePos[1][2][2];
-			tempColors = cubiePos[2][1][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
-
-			//Move DL to DB
-			cubiePos[1][2][2] = cubiePos[0][1][2];
-			tempColors = cubiePos[1][2][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			//Move DF to DL
-			cubiePos[0][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][1][2].setColors(tempColors);
 			break;
-
-		case "E":
-			tempCubie = cubiePos[2][0][1];
-
-			//Move LF to FR
-			cubiePos[2][0][1] = cubiePos[0][0][1];
-			tempColors = cubiePos[2][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
+			
+		case "E" :
+			preChange = new char[] {'L', 'B', 'R', 'F'};
+			postChange = new char[] {'F', 'L', 'B', 'R'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][i][1];
 				}
 			}
-			cubiePos[2][0][1].setColors(tempColors);
-
-			//Move LB to FL
-			cubiePos[0][0][1] = cubiePos[0][2][1];
-			tempColors = cubiePos[0][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][i][1] = matrix[i][j];
 				}
 			}
-			cubiePos[0][0][1].setColors(tempColors);
-
-			//Move BR to LB
-			cubiePos[0][2][1] = cubiePos[2][2][1];
-			tempColors = cubiePos[0][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
-
-			//Move FR to RB
-			cubiePos[2][2][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][1].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][1];
-
-			//Move L to F
-			cubiePos[1][0][1] = cubiePos[0][1][1];
-			tempColors = cubiePos[1][0][1].getColors();
-			tempColors[0].setDir('F');
-			cubiePos[1][0][1].setColors(tempColors);
-
-			//Move B to L
-			cubiePos[0][1][1] = cubiePos[1][2][1];
-			tempColors = cubiePos[0][1][1].getColors();
-			tempColors[0].setDir('L');
-			cubiePos[0][1][1].setColors(tempColors);
-
-			//Move R to B
-			cubiePos[1][2][1] = cubiePos[2][1][1];
-			tempColors = cubiePos[1][2][1].getColors();
-			tempColors[0].setDir('B');
-			cubiePos[1][2][1].setColors(tempColors);
-
-			//Move F to R
-			cubiePos[2][1][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('R');
-			cubiePos[2][1][1].setColors(tempColors);
-			break;	
-
+			break;
+			
 		case "E'" :
-			tempCubie = cubiePos[2][0][1];
-
-			//Move BR to RF
-			cubiePos[2][0][1] = cubiePos[2][2][1];
-			tempColors = cubiePos[2][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
+			preChange = new char[] {'F', 'L', 'B', 'R'};
+			postChange = new char[] {'L', 'B', 'R', 'F'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][i][1];
 				}
 			}
-			cubiePos[2][0][1].setColors(tempColors);
-
-			//Move LB to BR
-			cubiePos[2][2][1] = cubiePos[0][2][1];
-			tempColors = cubiePos[2][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][i][1] = matrix[i][j];
 				}
 			}
-			cubiePos[2][2][1].setColors(tempColors);
-
-			//Move LF to BL
-			cubiePos[0][2][1] = cubiePos[0][0][1];
-			tempColors = cubiePos[0][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
-
-			//Move FR to LF
-			cubiePos[0][0][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][0][1].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][1];
-
-			//Move R to F
-			cubiePos[1][0][1] = cubiePos[2][1][1];
-			tempColors = cubiePos[1][0][1].getColors();
-			tempColors[0].setDir('F');
-			cubiePos[1][0][1].setColors(tempColors);
-
-			//Move B to R
-			cubiePos[2][1][1] = cubiePos[1][2][1];
-			tempColors = cubiePos[2][1][1].getColors();
-			tempColors[0].setDir('R');
-			cubiePos[2][1][1].setColors(tempColors);
-
-			//Move L to B
-			cubiePos[1][2][1] = cubiePos[0][1][1];
-			tempColors = cubiePos[1][2][1].getColors();
-			tempColors[0].setDir('B');
-			cubiePos[1][2][1].setColors(tempColors);
-
-			//Move F to L
-			cubiePos[0][1][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('L');
-			cubiePos[0][1][1].setColors(tempColors);
 			break;
-
-		case "F":
-			tempCubie = cubiePos[0][0][0];
-
-			//Move FLD to FUL
-			cubiePos[0][0][0] = cubiePos[0][0][2];
-			tempColors = cubiePos[0][0][0].getColors();
+			
+		case "F": 
+			preChange = new char[] {'F', 'U', 'R', 'D', 'L'};
+			postChange = new char[] {'F', 'R', 'D', 'L', 'U'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][0][i];
 				}
 			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			//Move FRD to FDL
-			cubiePos[0][0][2] = cubiePos[2][0][2];
-			tempColors = cubiePos[0][0][2].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][0][i] = matrix[i][j];
 				}
 			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			//Move FRU to FDR
-			cubiePos[2][0][2] = cubiePos[2][0][0];
-			tempColors = cubiePos[2][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move FUL to FRU
-			cubiePos[2][0][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][2];
-
-			//Move FR to FD
-			cubiePos[1][0][2] = cubiePos[2][0][1];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move FU to FR
-			cubiePos[2][0][1] = cubiePos[1][0][0];
-			tempColors = cubiePos[2][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][0][1].setColors(tempColors);
-
-			//Move FL to FU
-			cubiePos[1][0][0] = cubiePos[0][0][1];
-			tempColors = cubiePos[1][0][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			//Move FD to FL
-			cubiePos[0][0][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][0][1].setColors(tempColors);
 			break;
-
+			
 		case "F'":
-			tempCubie = cubiePos[0][0][0];
-
-			//Move FRU to FUL
-			cubiePos[0][0][0] = cubiePos[2][0][0];
-			tempColors = cubiePos[0][0][0].getColors();
+			preChange = new char[] {'F', 'U', 'R', 'D', 'L'};
+			postChange = new char[] {'F', 'L', 'U', 'R', 'D'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][0][i];
 				}
 			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			//Move FRD to FUR
-			cubiePos[2][0][0] = cubiePos[2][0][2];
-			tempColors = cubiePos[2][0][0].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][0][i] = matrix[i][j];
 				}
 			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			//Move FLD to FDR
-			cubiePos[2][0][2] = cubiePos[0][0][2];
-			tempColors = cubiePos[2][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move FUL to FLD
-			cubiePos[0][0][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][2];
-
-			//Move FL to FD
-			cubiePos[1][0][2] = cubiePos[0][0][1];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move FU to FL
-			cubiePos[0][0][1] = cubiePos[1][0][0];
-			tempColors = cubiePos[0][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][0][1].setColors(tempColors);
-
-			//Move FR to FU
-			cubiePos[1][0][0] = cubiePos[2][0][1];
-			tempColors = cubiePos[1][0][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			//Move FD to FR
-			cubiePos[2][0][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][0][1].setColors(tempColors);
 			break;
-
-
-		case "L":
-			tempCubie = cubiePos[0][2][0];
-
-			//Move LBD to LUB
-			cubiePos[0][2][0] = cubiePos[0][2][2];
-			tempColors = cubiePos[0][2][0].getColors();
+		
+		case "L": 
+			preChange = new char[] {'L', 'B', 'D', 'F', 'U'};
+			postChange = new char[] {'L', 'U', 'B', 'D', 'F'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[0][Math.abs(j-2)][i];
 				}
 			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move LFD to LDB
-			cubiePos[0][2][2] = cubiePos[0][0][2];
-			tempColors = cubiePos[0][2][2].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+				for(int j = 0; j<3; j++) {
+					cubiePos[0][Math.abs(j-2)][i] = matrix[i][j];
 				}
 			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			//Move LUF to LFD
-			cubiePos[0][0][2] = cubiePos[0][0][0];
-			tempColors = cubiePos[0][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			//Move LUB to LFU
-			cubiePos[0][0][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			tempCubie = cubiePos[0][0][1];
-
-			//Move LU to LF
-			cubiePos[0][0][1] = cubiePos[0][1][0];
-			tempColors = cubiePos[0][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[0][0][1].setColors(tempColors);
-
-			//Move LB to LU
-			cubiePos[0][1][0] = cubiePos[0][2][1];
-			tempColors = cubiePos[0][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[0][1][0].setColors(tempColors);
-
-			//Move LD to LB
-			cubiePos[0][2][1] = cubiePos[0][1][2];
-			tempColors = cubiePos[0][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
-
-			//Move LF to LD
-			cubiePos[0][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][1][2].setColors(tempColors);
 			break;
-
-		case "L'":
-			tempCubie = cubiePos[0][2][0];
-
-			//Move LUF to LBU
-			cubiePos[0][2][0] = cubiePos[0][0][0];
-			tempColors = cubiePos[0][2][0].getColors();
+			
+		case "L'": 
+			preChange = new char[] {'L', 'U', 'B', 'D', 'F'};
+			postChange = new char[] {'L', 'B', 'D', 'F', 'U'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[0][Math.abs(j-2)][i];
 				}
 			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move LFD to LUF
-			cubiePos[0][0][0] = cubiePos[0][0][2];
-			tempColors = cubiePos[0][0][0].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
+				for(int j = 0; j<3; j++) {
+					cubiePos[0][Math.abs(j-2)][i] = matrix[i][j];
 				}
 			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			//Move LBD to LDF
-			cubiePos[0][0][2] = cubiePos[0][2][2];
-			tempColors = cubiePos[0][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[0][0][2].setColors(tempColors);
-
-			//Move LUB to LBD
-			cubiePos[0][2][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][2][2].setColors(tempColors);
-
-			tempCubie = cubiePos[0][2][1];
-
-			//Move LU to LB
-			cubiePos[0][2][1] = cubiePos[0][1][0];
-			tempColors = cubiePos[0][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[0][2][1].setColors(tempColors);
-
-			//Move LF to LU
-			cubiePos[0][1][0] = cubiePos[0][0][1];
-			tempColors = cubiePos[0][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[0][1][0].setColors(tempColors);
-
-			//Move LD to LF
-			cubiePos[0][0][1] = cubiePos[0][1][2];
-			tempColors = cubiePos[0][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[0][0][1].setColors(tempColors);
-
-			//Move LB to LD
-			cubiePos[0][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][1][2].setColors(tempColors);
 			break;
-
-		case "M":
-			tempCubie = cubiePos[1][2][0];
-
-			//Move BD to UB
-			cubiePos[1][2][0] = cubiePos[1][2][2];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+			
+		case "M": 
+			preChange = new char[] {'B', 'D', 'F', 'U'};
+			postChange = new char[] {'U', 'B', 'D', 'F'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[1][Math.abs(j-2)][i];
 				}
 			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move FD to DB
-			cubiePos[1][2][2] = cubiePos[1][0][2];
-			tempColors = cubiePos[1][2][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[1][Math.abs(j-2)][i] = matrix[i][j];
 				}
 			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			//Move UF to FD
-			cubiePos[1][0][2] = cubiePos[1][0][0];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move UB to FU
-			cubiePos[1][0][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][1];
-
-			//Move U to F
-			cubiePos[1][0][1] = cubiePos[1][1][0];
-			tempColors = cubiePos[1][0][1].getColors();
-			tempColors[0].setDir('F');
-			cubiePos[1][0][1].setColors(tempColors);
-
-			//Move B to U
-			cubiePos[1][1][0] = cubiePos[1][2][1];
-			tempColors = cubiePos[1][1][0].getColors();
-			tempColors[0].setDir('U');
-			cubiePos[1][1][0].setColors(tempColors);
-
-			//Move D to B
-			cubiePos[1][2][1] = cubiePos[1][1][2];
-			tempColors = cubiePos[1][2][1].getColors();
-			tempColors[0].setDir('B');
-			cubiePos[1][2][1].setColors(tempColors);
-
-			//Move F to D
-			cubiePos[1][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('D');
-			cubiePos[1][1][2].setColors(tempColors);
 			break;
-
-		case "M'":
-			tempCubie = cubiePos[1][2][0];
-
-			//Move UF to BU
-			cubiePos[1][2][0] = cubiePos[1][0][0];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
+			
+		case "M'": 
+			preChange = new char[] {'U', 'B', 'D', 'F'};
+			postChange = new char[] {'B', 'D', 'F', 'U'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[1][Math.abs(j-2)][i];
 				}
 			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move FD to UF
-			cubiePos[1][0][0] = cubiePos[1][0][2];
-			tempColors = cubiePos[1][0][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[1][Math.abs(j-2)][i] = matrix[i][j];
 				}
 			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			//Move BD to DF
-			cubiePos[1][0][2] = cubiePos[1][2][2];
-			tempColors = cubiePos[1][0][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][2].setColors(tempColors);
-
-			//Move UB to BD
-			cubiePos[1][2][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[1][2][2].setColors(tempColors);
-
-			tempCubie = cubiePos[1][2][1];
-
-			//Move U to B
-			cubiePos[1][2][1] = cubiePos[1][1][0];
-			tempColors = cubiePos[1][2][1].getColors();
-			tempColors[0].setDir('B');
-			cubiePos[1][2][1].setColors(tempColors);
-
-			//Move F to U
-			cubiePos[1][1][0] = cubiePos[1][0][1];
-			tempColors = cubiePos[1][1][0].getColors();
-			tempColors[0].setDir('U');
-			cubiePos[1][1][0].setColors(tempColors);
-
-			//Move D to F
-			cubiePos[1][0][1] = cubiePos[1][1][2];
-			tempColors = cubiePos[1][0][1].getColors();
-			tempColors[0].setDir('F');
-			cubiePos[1][0][1].setColors(tempColors);
-
-			//Move B to D
-			cubiePos[1][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('D');
-			cubiePos[1][1][2].setColors(tempColors);
 			break;
-
-		case "R":
-			tempCubie = cubiePos[2][2][0];
-
-			//Move RUF to RBU
-			cubiePos[2][2][0] = cubiePos[2][0][0];
-			tempColors = cubiePos[2][2][0].getColors();
+			
+		case "R": 
+			preChange = new char[] {'R', 'U', 'B', 'D', 'F'};
+			postChange = new char[] {'R', 'B', 'D', 'F', 'U'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[2][j][i];
 				}
 			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			//Move RFD to RUF
-			cubiePos[2][0][0] = cubiePos[2][0][2];
-			tempColors = cubiePos[2][0][0].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
+				for(int j = 0; j<3; j++) {
+					cubiePos[2][j][i] = matrix[i][j];
 				}
 			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			//Move RBD to RDF
-			cubiePos[2][0][2] = cubiePos[2][2][2];
-			tempColors = cubiePos[2][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move RUB to RBD
-			cubiePos[2][2][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			tempCubie = cubiePos[2][2][1];
-
-			//Move RU to RB
-			cubiePos[2][2][1] = cubiePos[2][1][0];
-			tempColors = cubiePos[2][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[2][2][1].setColors(tempColors);
-
-			//Move RF to RU
-			cubiePos[2][1][0] = cubiePos[2][0][1];
-			tempColors = cubiePos[2][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][1][0].setColors(tempColors);
-
-			//Move RD to RF
-			cubiePos[2][0][1] = cubiePos[2][1][2];
-			tempColors = cubiePos[2][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[2][0][1].setColors(tempColors);
-
-			//Move RB to RD
-			cubiePos[2][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
 			break;
-
-		case "R'":
-			tempCubie = cubiePos[2][2][0];
-
-			//Move RBD to RUB
-			cubiePos[2][2][0] = cubiePos[2][2][2];
-			tempColors = cubiePos[2][2][0].getColors();
+			
+		case "R'": 
+			preChange = new char[] {'R', 'B', 'D', 'F', 'U'};
+			postChange = new char[] {'R', 'U', 'B', 'D', 'F'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[2][j][i];
 				}
 			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			//Move RFD to RDB
-			cubiePos[2][2][2] = cubiePos[2][0][2];
-			tempColors = cubiePos[2][2][2].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
+				for(int j = 0; j<3; j++) {
+					cubiePos[2][j][i] = matrix[i][j];
 				}
 			}
-			cubiePos[2][2][2].setColors(tempColors);
-
-			//Move RUF to RFD
-			cubiePos[2][0][2] = cubiePos[2][0][0];
-			tempColors = cubiePos[2][0][2].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[2][0][2].setColors(tempColors);
-
-			//Move RUB to RFU
-			cubiePos[2][0][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			tempCubie = cubiePos[2][0][1];
-
-			//Move RU to RF
-			cubiePos[2][0][1] = cubiePos[2][1][0];
-			tempColors = cubiePos[2][0][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[2][0][1].setColors(tempColors);
-
-			//Move RB to RU
-			cubiePos[2][1][0] = cubiePos[2][2][1];
-			tempColors = cubiePos[2][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][1][0].setColors(tempColors);
-
-			//Move RD to RB
-			cubiePos[2][2][1] = cubiePos[2][1][2];
-			tempColors = cubiePos[2][2][1].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[2][2][1].setColors(tempColors);
-
-			//Move RF to RD
-			cubiePos[2][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
 			break;
-
-		case "S":
-			tempCubie = cubiePos[0][1][0];
-
-			//Move LD to UL
-			cubiePos[0][1][0] = cubiePos[0][1][2];
-			tempColors = cubiePos[0][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+			
+		case "S": 
+			preChange = new char[] {'U', 'R', 'D', 'L'};
+			postChange = new char[] {'R', 'D', 'L', 'U'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][1][i];
 				}
 			}
-			cubiePos[0][1][0].setColors(tempColors);
-
-			//Move RD to DL
-			cubiePos[0][1][2] = cubiePos[2][1][2];
-			tempColors = cubiePos[0][1][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('L');
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][1][i] = matrix[i][j];
 				}
 			}
-			cubiePos[0][1][2].setColors(tempColors);
-
-			//Move RU to DR
-			cubiePos[2][1][2] = cubiePos[2][1][0];
-			tempColors = cubiePos[2][1][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
-
-			//Move UL to RU
-			cubiePos[2][1][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('U');
-				}
-			}
-			cubiePos[2][1][0].setColors(tempColors);
-
-			tempCubie = cubiePos[1][1][2];
-
-			//Move R to D
-			cubiePos[1][1][2] = cubiePos[2][1][1];
-			tempColors = cubiePos[1][1][2].getColors();
-			tempColors[0].setDir('D');
-			cubiePos[1][1][2].setColors(tempColors);
-
-			//Move U to R
-			cubiePos[2][1][1] = cubiePos[1][1][0];
-			tempColors = cubiePos[2][1][1].getColors();
-			tempColors[0].setDir('R');
-			cubiePos[2][1][1].setColors(tempColors);
-
-			//Move L to U
-			cubiePos[1][1][0] = cubiePos[0][1][1];
-			tempColors = cubiePos[1][1][0].getColors();
-			tempColors[0].setDir('U');
-			cubiePos[1][1][0].setColors(tempColors);
-
-			//Move D to L
-			cubiePos[0][1][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('L');
-			cubiePos[0][1][1].setColors(tempColors);
 			break;
-
+			
 		case "S'":
-			tempCubie = cubiePos[0][1][0];
-
-			//Move RU to UL
-			cubiePos[0][1][0] = cubiePos[2][1][0];
-			tempColors = cubiePos[0][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
+			preChange = new char[] {'U', 'R', 'D', 'L'};
+			postChange = new char[] {'L', 'U', 'R', 'D'};
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][1][i];
 				}
 			}
-			cubiePos[0][1][0].setColors(tempColors);
-
-			//Move RD to UR
-			cubiePos[2][1][0] = cubiePos[2][1][2];
-			tempColors = cubiePos[2][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('U');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][1][i] = matrix[i][j];
 				}
 			}
-			cubiePos[2][1][0].setColors(tempColors);
-
-			//Move LD to DR
-			cubiePos[2][1][2] = cubiePos[0][1][2];
-			tempColors = cubiePos[2][1][2].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-				else if(tempColors[i].getDir() == 'D'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][2].setColors(tempColors);
-
-			//Move UL to LD
-			cubiePos[0][1][2] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'U'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('D');
-				}
-			}
-			cubiePos[0][1][2].setColors(tempColors);
-
-			tempCubie = cubiePos[1][1][2];
-
-			//Move L to D
-			cubiePos[1][1][2] = cubiePos[0][1][1];
-			tempColors = cubiePos[1][1][2].getColors();
-			tempColors[0].setDir('D');
-			cubiePos[1][1][2].setColors(tempColors);
-
-			//Move U to L
-			cubiePos[0][1][1] = cubiePos[1][1][0];
-			tempColors = cubiePos[0][1][1].getColors();
-			tempColors[0].setDir('L');
-			cubiePos[0][1][1].setColors(tempColors);
-
-			//Move R to U
-			cubiePos[1][1][0] = cubiePos[2][1][1];
-			tempColors = cubiePos[1][1][0].getColors();
-			tempColors[0].setDir('U');
-			cubiePos[1][1][0].setColors(tempColors);
-
-			//Move D to R
-			cubiePos[2][1][1] = tempCubie;
-			tempColors = tempCubie.getColors();
-			tempColors[0].setDir('R');
-			cubiePos[2][1][1].setColors(tempColors);
 			break;
-
-		case "U":
-			tempCubie = cubiePos[2][0][0];
-
-			//Move UBR to URF
-			cubiePos[2][0][0] = cubiePos[2][2][0];
-			tempColors = cubiePos[2][0][0].getColors();
+		
+		case "U" :
+			preChange = new char[] {'U', 'F', 'L', 'B', 'R'};
+			postChange = new char[] {'U', 'L', 'B', 'R', 'F'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][Math.abs(i-2)][0];
 				}
 			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			//Move ULB to UBR
-			cubiePos[2][2][0] = cubiePos[0][2][0];
-			tempColors = cubiePos[2][2][0].getColors();
+			matrix = rotateMatrix(matrix, 90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][Math.abs(i-2)][0] = matrix[i][j];
 				}
 			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			//Move ULF to UBL
-			cubiePos[0][2][0] = cubiePos[0][0][0];
-			tempColors = cubiePos[0][2][0].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move UFR to ULF
-			cubiePos[0][0][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][0];
-
-			//Move UR to UF
-			cubiePos[1][0][0] = cubiePos[2][1][0];
-			tempColors = cubiePos[1][0][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			//Move UB to UR
-			cubiePos[2][1][0] = cubiePos[1][2][0];
-			tempColors = cubiePos[2][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][0].setColors(tempColors);
-
-			//Move UL to UB
-			cubiePos[1][2][0] = cubiePos[0][1][0];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move UF to UL
-			cubiePos[0][1][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][1][0].setColors(tempColors);
 			break;
-
-
-		case "U'":
-			tempCubie = cubiePos[2][0][0];
-
-			//Move ULF to UFR
-			cubiePos[2][0][0] = cubiePos[0][0][0];
-			tempColors = cubiePos[2][0][0].getColors();
+			
+		case "U'" :
+			preChange = new char[] {'U', 'L', 'B', 'R', 'F'};
+			postChange = new char[] {'U', 'F', 'L', 'B', 'R'};
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
+				for(int j = 0; j<3; j++) {
+					matrix[i][j] = cubiePos[j][Math.abs(i-2)][0];
 				}
 			}
-			cubiePos[2][0][0].setColors(tempColors);
-
-			//Move ULB to UFL
-			cubiePos[0][0][0] = cubiePos[0][2][0];
-			tempColors = cubiePos[0][0][0].getColors();
+			matrix = rotateMatrix(matrix, -90, preChange, postChange);
+			
 			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-				else if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
+				for(int j = 0; j<3; j++) {
+					cubiePos[j][Math.abs(i-2)][0] = matrix[i][j];
 				}
 			}
-			cubiePos[0][0][0].setColors(tempColors);
-
-			//Move UBR to ULB
-			cubiePos[0][2][0] = cubiePos[2][2][0];
-			tempColors = cubiePos[0][2][0].getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
-				}
-				else if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[0][2][0].setColors(tempColors);
-
-			//Move UFR to URB
-			cubiePos[2][2][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<3; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-				else if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][2][0].setColors(tempColors);
-
-			tempCubie = cubiePos[1][0][0];
-
-			//Move UL to UF
-			cubiePos[1][0][0] = cubiePos[0][1][0];
-			tempColors = cubiePos[1][0][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'L'){
-					tempColors[i].setDir('F');
-				}
-			}
-			cubiePos[1][0][0].setColors(tempColors);
-
-			//Move UB to UL
-			cubiePos[0][1][0] = cubiePos[1][2][0];
-			tempColors = cubiePos[0][1][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'B'){
-					tempColors[i].setDir('L');
-				}
-			}
-			cubiePos[0][1][0].setColors(tempColors);
-
-			//Move UR to UB
-			cubiePos[1][2][0] = cubiePos[2][1][0];
-			tempColors = cubiePos[1][2][0].getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'R'){
-					tempColors[i].setDir('B');
-				}
-			}
-			cubiePos[1][2][0].setColors(tempColors);
-
-			//Move UF to UR
-			cubiePos[2][1][0] = tempCubie;
-			tempColors = tempCubie.getColors();
-			for(int i = 0; i<2; i++) {
-				if(tempColors[i].getDir() == 'F'){
-					tempColors[i].setDir('R');
-				}
-			}
-			cubiePos[2][1][0].setColors(tempColors);
-			break;		
+			break;				
 
 		case "x":
-			turn("R"); turn("M'"); turn("L'");
+			performMoves("R M' L'");
+			//turn("R"); turn("M'"); turn("L'");
 			break;
 
 		case "x'":
-			turn("R'"); turn("M"); turn("L");
+			performMoves("R' M L");
+			//turn("R'"); turn("M"); turn("L");
 			break;
 
 		case "y":
-			turn("U"); turn("E'"); turn("D'");
+			performMoves("U E' D'");
+			//turn("U"); turn("E'"); turn("D'");
 			break;
 
 		case "y'":
-			turn("U'"); turn("E"); turn("D");
+			performMoves("U' E D");
+			//turn("U'"); turn("E"); turn("D");
 			break;
 
 		case "z":
-			turn("F"); turn("S"); turn("B'");
+			performMoves("F S B'");
+			//turn("F"); turn("S"); turn("B'");
 			break;
 
 		case "z'":
-			turn("F'"); turn("S'"); turn("B");
+			performMoves("F' S' B");
+			//turn("F'"); turn("S'"); turn("B");
 			break;
 
 		}
@@ -1813,6 +444,63 @@ public class Cube {
 
 	}
 
+	private Cubie[][] rotateMatrix(Cubie[][] orig, int degrees, char[] preChange,
+			char[] postChange) {
+		Cubie[][] rotated = new Cubie[3][3];
+		if(degrees == 90) {
+			//Transpose the matrix
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					rotated[i][j] = orig[j][i];
+				}
+			}
+			//Reverse all the rows
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<rotated[0].length/2; j++) {
+					Cubie tempCubie = rotated[i][3-j-1];
+					rotated[i][3-j-1] = rotated[i][j];
+					rotated[i][j] = tempCubie;
+				}
+			}
+		}
+		else if(degrees == -90) {
+			//Transpose the matrix
+			for(int i = 0; i<3; i++) {
+				for(int j = 0; j<3; j++) {
+					rotated[i][j] = orig[j][i];
+				}
+			}
+			
+			//Reverse all the columns
+			for(int i = 0; i<rotated[0].length/2; i++) {
+				for(int j = 0; j<3; j++) {
+					Cubie tempCubie = rotated[3-i-1][j];
+					rotated[3-i-1][j] = rotated[i][j];
+					rotated[i][j] = tempCubie;
+				}
+			}
+		}
+		
+		//Change the direction of all colors appropriately as well before returning the array
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j<3; j++) {
+				CubieColor[] tempColors = rotated[i][j].getColors();
+				for(int k = 0; k<tempColors.length; k++) {
+					int index = 6;
+					for(int x = 0; x < preChange.length; x++) {
+						if(tempColors[k].getDir() == preChange[x]) {
+							index = x;
+						}
+					}
+					if(index<postChange.length)
+						tempColors[k].setDir(postChange[index]);
+				}
+				rotated[i][j].setColors(tempColors);
+			}
+		}
+		return rotated;
+	}
+	
 	/**
 	 * Loops through the characters in a String of standard turning notation to apply the set of moves to the cube
 	 * Checks for clockwise, double, and counterclockwise turns
@@ -1972,6 +660,30 @@ public class Cube {
 		return moves;	
 	}
 	
+	public String randScramble() {
+		String scramble = new String();
+		char[] possMoves = new char[] {'U', 'D', 'R', 'L', 'F', 'B'};
+		char prevMove = possMoves[(int)(Math.random()*6)];
+		char secondLastMove = possMoves[(int)(Math.random()*6)];
+		for(int numMoves = 0; numMoves < 20; ) {
+			char move = possMoves[(int)(Math.random()*6)];
+			if(move != prevMove && move!= secondLastMove) {
+				int rand = (int)(Math.random()*100);
+				if(rand < 33) {
+					scramble += move + "2 ";
+				} else if(rand < 67) {
+					scramble += move + "' ";
+				} else {
+					scramble += move + " ";
+				}
+				secondLastMove = prevMove;
+				prevMove = move;
+				numMoves++;
+			}
+		}
+		scramble(scramble);
+		return scramble;
+	}
 	/**
 	 * Scrambles a cube according to WCA rules (White on top, Green in front). 
 	 * After scrambling, returns the cube to the original position (Yellow on top, Green in front). 
