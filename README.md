@@ -26,6 +26,9 @@ java  CubeDisplayer
 ```
 
 ## Usage
+Before trying to use this program, I advise you to learn the standard notation for turns and rotations on a Rubik's cube
+[here](https://ruwix.com/the-rubiks-cube/notation/).
+
 There are two modes in which solutions can be generated. The first is the default text scramble mode, which allows the user
 to input a text scramble or generate a random scramble. The second mode is color selection mode, which allows the user
 to input the colors of their scrambled cube and follow through a selection. Modes can be toggled using the menu bar.
