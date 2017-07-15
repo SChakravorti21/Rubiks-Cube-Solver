@@ -165,8 +165,8 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 		ImageIcon icon1 = new ImageIcon(), icon2 = new ImageIcon();
 		try {
-			Image img1 = ImageIO.read(getClass().getResource("Skip.png"));
-			Image img2 = ImageIO.read(getClass().getResource("Rewind.png"));
+			Image img1 = ImageIO.read(getClass().getResource("resources/Skip.png"));
+			Image img2 = ImageIO.read(getClass().getResource("resources/Rewind.png"));
 			img1 = img1.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 			img2 = img2.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 			icon1 = new ImageIcon(img1);
