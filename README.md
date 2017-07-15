@@ -60,3 +60,7 @@ Color Input Mode (Color Selection Screen) -
 Color Input Mode (Solution Screen) -
  * Solution presented in same format as Text Scramble Mode
 ![Color Input Solution](/images/ColorSolution.jpeg)
+
+## License
+This project is licensed under the terms of the MIT license.
+Check the LICENSE.txt file for more information.
