@@ -1,5 +1,3 @@
-
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,6 +27,17 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Copyright 2017, Shoumyo Chakravorti, All rights reserved.
+ * <p>
+ * Licensed under the MIT License.
+ * <p>
+ * The CubePainter class defines and takes input from all components which the user can interact with.
+ * The CubePainter class has two unique solution modes: "Text Scramble" and "Color Selection".
+ * 
+ * @author Shoumyo Chakravorti
+ * @version 2.0
+ */
 public class CubePainter extends JPanel implements ActionListener, ChangeListener, MouseListener {
 	//Auto-generated ID
 	private static final long serialVersionUID = -8879300942801280752L;
@@ -639,7 +648,7 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 
 	/**
 	 * Updates the mode to either text scramble or color selection mode based on the parameter.
-	 * @param str
+	 * @param str the mode to change to
 	 */
 	public void updateMode(String str) {
 		if(!mode.equals(str)) {
@@ -656,8 +665,8 @@ public class CubePainter extends JPanel implements ActionListener, ChangeListene
 	}
 
 	/**
-	 * Sets inSolution to the parameter, determining whether a solution is to be displayed.
-	 * @param inSoln
+	 * Sets {@code inSolution} to the parameter, determining whether a solution is to be displayed.
+	 * @param inSoln whether mode should be switched to being in a solution or not
 	 */
 	public void setInSolution(boolean inSoln) {
 		inSolution = inSoln;

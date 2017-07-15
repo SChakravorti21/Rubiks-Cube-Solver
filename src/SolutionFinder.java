@@ -1,4 +1,14 @@
-
+/**
+ * Copyright 2017, Shoumyo Chakravorti, All rights reserved.
+ * <p>
+ * Licensed under the MIT License.
+ * <p>
+ * The SolutionFinder class outputs the solution to a given scramble on a cube to the console.
+ * This class was heavily used prior to development of the GUI.
+ * 
+ * @author Shoumyo Chakravorti
+ * @version 2.0
+ */
 public class SolutionFinder {
 
 	private static Cube cube;
