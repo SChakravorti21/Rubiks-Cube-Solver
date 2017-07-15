@@ -1,7 +1,19 @@
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * Copyright 2017, Shoumyo Chakravorti, All rights reserved.
+ * <p>
+ * Licensed under the MIT License.
+ * <p>
+ * The CubeDisplayer class extends JFrame, allowing for the display of a CubePainter JPanel which
+ * the user can interact with. The CubeDisplayer class allows for toggling between solution modes.
+ * 
+ * @author Shoumyo Chakravorti
+ * @version 2.0
+ */
 public class CubeDisplayer extends JFrame implements ActionListener{
 	//Auto-generated ID
 	private static final long serialVersionUID = -3198702237161500498L;
@@ -63,12 +75,10 @@ public class CubeDisplayer extends JFrame implements ActionListener{
 		if(e.getSource() == colorSelection) {
 			cubePainter.setInSolution(false);
 			cubePainter.updateMode(CubePainter.COLOR_SELECTION);
-			cubePainter.repaint();
 		}
 		else if(e.getSource() == scramble) {
 			cubePainter.setInSolution(true);
 			cubePainter.updateMode(CubePainter.TEXT_SCRAMBLE);
-			cubePainter.repaint();
 		}
 	}
 }

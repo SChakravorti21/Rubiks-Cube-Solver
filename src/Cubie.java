@@ -1,4 +1,15 @@
-;
+/**
+ * Copyright 2017, Shoumyo Chakravorti, All rights reserved.
+ * <p>
+ * Licensed under the MIT License.
+ * <p>
+ * The Cubie class defines the attributes and actions of individual cubies. By defining individual cubies
+ * based on their position, colors, and the directions of their colors, a cube can be constructed in the
+ * Cube class.
+ * 
+ * @author Shoumyo Chakravorti
+ * @version 2.0
+ */
 public class Cubie {
 
 	//Store x, y, and z positions of a cubie
@@ -13,16 +24,21 @@ public class Cubie {
 	/**
 	 * Constructs a Cubie object
 	 * Sets the location of the cubie
-	 * <param> xPos, yPos, zPos </param>
+	 * @param xPos the x position of the cubie
+	 * @param yPos the y position of the cubie
+	 * @param zPos the z position of the cubie
+	 * @param nColors the colors which the cubie will hold
+	 * @param isCorner whether the cubie is a corner cubie
+	 * @param isEdge whether the cubie is an edge cubie
 	 */
-	public Cubie (int xPos, int yPos, int zPos, CubieColor[] ncolors, boolean isCorner,
+	public Cubie (int xPos, int yPos, int zPos, CubieColor[] nColors, boolean isCorner,
 			boolean isEdge) {
 		x = xPos;
 		y = yPos;
 		z = zPos;
 		corner = isCorner;
 		edge = isEdge;
-		colors = ncolors;
+		colors = nColors;
 	}
 	
 	/**
@@ -48,7 +64,7 @@ public class Cubie {
 	
 	/**
 	 * Finds and returns the direction of a particular color on any type of cubie
-	 * @param color </param> The color for which the direction is being found
+	 * @param color The color for which the direction is being found
 	 * @return the direction of the color on the corresponding cubie ('A' if color is not on cubie)
 	 */
 	public char getDirOfColor(char color) {
@@ -61,7 +77,7 @@ public class Cubie {
 	
 	/**
 	 * Finds and returns the color in a particular direction on any type of cubie
-	 * @param dir </param> The direction for which the color is being found
+	 * @param dir The direction for which the color is being found
 	 * @return the direction of the color on the corresponding cubie ('A' if cubie does not have a color in direction dir)
 	 */
 	public char getColorOfDir(char dir) {
@@ -73,17 +89,18 @@ public class Cubie {
 	}
 	
 	/**
-	 * @return the colors and their respective directions of the Cubie
+	 * @return CubieColor[] the colors of the Cubie and their respective directions
 	 */
 	public CubieColor[] getColors() {
 		return colors;
 	}
 	
 	/**
-	 * @return Changes the colors associated with the Cubie
+	 * Sets the colors of the cubie to those inputed as an array of CubieColors.
+	 * @param newColors the colors that will be applied to the cubie
 	 */
-	public void setColors(CubieColor[] newcolors) {
-		this.colors = newcolors;
+	public void setColors(CubieColor[] newColors) {
+		this.colors = newColors;
 	}
 	
 	/**
@@ -116,7 +133,9 @@ public class Cubie {
 	
 	/**
 	 * Used to aid formation of the white cross
-	 * @return For any EdgeCubie that is NOT in the E Slice, method returns the vertical slice that cubie belongs in
+	 * @param x the x position of the cubie
+	 * @param y the y position of the cubie
+	 * @return For any EdgeCubie that is NOT in the E Slice, returns the vertical slice that cubie belongs in
 	 */
 	public char verticalFace(int x, int y) {
 		if(edge) {
